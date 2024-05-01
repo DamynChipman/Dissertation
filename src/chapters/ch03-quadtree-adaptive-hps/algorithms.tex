@@ -1,0 +1,37 @@
+\section{The Quadtree-Adaptive HPS Method}
+\label{sec:algorithms}
+
+Having discussed the components of the quadtree-adaptive HPS method, we now detail the full build, upwards, and solve algorithms.
+
+The build stage found in \refalg{alg:build_stage} is a recursive application of \texttt{Merge4To1} found in \refalg{alg:build_merge}. The build stage is composed of an initial iteration over all leaf patches to compute the local Dirichlet-to-Neumann matrices $\textbf{T}^{\tau}$. Once all leaf patches have computed $\textbf{T}^{\tau}$, we recursively iterate up the tree in a post-node fashion, calling the 4-to-1 merge algorithm (\refalg{alg:build_merge}) for each set of siblings (group of four) and their parent node. Once the build stage is complete, each node in the tree has a local solution matrix $\textbf{S}^{\tau}$ that can be used in the solve stage to propagate the boundary data to each patch for local solves.
+
+\begin{algorithm}[ht]
+    \caption{\texttt{BuildStage} Function}
+    \begin{algorithmic}[0]
+        \Require Quadtree mesh $\mathcal{M}$
+        \State $\mathcal{M} \rightarrow$ \texttt{Merge(BuildD2N, Merge4To1)} \Comment{Build leaf level data then merge}
+    \end{algorithmic}
+    \label{alg:build_stage}
+\end{algorithm}
+
+Similar to the build stage, the upwards stage found in \refalg{alg:upwards_stage} is a recursive application of {\texttt{Upwards4To1}} found in \refalg{alg:upwards_merge}. This stage only needs to be called when solving a non-homogeneous elliptic problem. The pattern of iteration is identical to the build stage, i.e., a recursive iteration up the tree in a post-node fashion.
+
+\begin{algorithm}[ht]
+    \caption{\texttt{UpwardsStage} Function}
+    \begin{algorithmic}[0]
+        \Require Quadtree mesh $\mathcal{M}$
+        \State $\mathcal{M} \rightarrow$ \texttt{Merge(MapD2N, Upwards4To1)} \Comment{Build leaf level data then merge}
+    \end{algorithmic}
+    \label{alg:upwards_stage}
+\end{algorithm}
+
+The solve stage found in \refalg{alg:solve_stage} is a recursive application of {\texttt{Split1To4}} found in \refalg{alg:solve_split}. After the build and upwards stages, the solve stage propagates the boundary data from the physical boundary to each leaf patch boundary. This is done through a recursive iteration down the tree in a pre-node fashion. Each call to the 1-to-4 split algorithm (\refalg{alg:solve_split}) is a matrix-vector product to form the children boundary data. After all leaf patches have local boundary data, a final iteration over all patches is done to compute the solution in the interior of each leaf patch, solving the elliptic problem everywhere.
+
+\begin{algorithm}[ht]
+    \caption{\texttt{SolveStage} Function}
+    \begin{algorithmic}[0]
+        \Require Quadtree mesh $\mathcal{M}$
+        \State $\mathcal{M} \rightarrow$ \texttt{Split(PatchSolver, Split4To1)} \Comment{Map external data to internal data then solve on leaf patches}
+    \end{algorithmic}
+    \label{alg:solve_stage}
+\end{algorithm}

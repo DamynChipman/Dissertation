@@ -1,0 +1,64 @@
+\section{The \HPS Method}
+\label{sec:hps}
+
+The \HPS (HPS) method is a direct method for solving elliptic partial differential equations based on a hierarchical tree structure. The HPS method is related to domain decomposition in that it decomposes a larger domain into smaller regular subdomains for which fast solvers can be easily applied. Poincaré-Steklov operators \cite{quarteroni1991theory} define a class of boundary operators that map boundary data from one type to another. In ths HPS method, this mapping is used to glue together a decomposed quadrants of a composite quadtree grid by equating fluxes across domain boundaries. This happens through the use of Dirichlet-to-Neumann operators, a type of Poincaré-Steklov operators. 
+
+Inspired by the nested dissection method of George, Gillman proposed the HPS method as a direct solver for elliptic PDEs, with the main contribution of \cite{gillman2014direct} being the formulation of the HPS algorithm on a binary tree structure. Gillman details the merge procedure (the build stage) as well as the the solve stage (or the application of the matrix factorization). Their presentation includes details on the storage of operators using a hierarchically block separable (HBS) format that takes advantage of the low-rank structure of the Dirichlet-to-Neumann matrices. Using an HBS format allows Gillman et al.\ to achieve $\mathcal{O}(N)$ complexity for the build or factorization stage. Further advancements to the HPS method include a 3D implementation and discussion in \cite{hao2016direct}, implementations on an adaptive mesh in \cite{babb2018accelerated} and \cite{geldermans2019adaptive}, and parallel considerations in \cite{beams2020parallel}. Applications of the relatively new HPS method can be found in \cite{fortunato2020ultraspherical}. Tutorials of Martinsson's implementation of the HPS method can be found in \cite{martinsson2015hierarchical} and chapters 19--27 of \cite{martinsson2019fast}.
+
+The HPS method is well suited for solving an elliptic PDE on an adaptive quadtree and octree meshes. There have been a few implementations of the HPS method on an adaptive mesh, including \cite{babb2018accelerated} and \cite{geldermans2019adaptive}. Typically, the approach is to interpolate entire patches or edges when merging so that the interface lines up with the coarser of the two patches. In our implementation, we follow the approach in \cite{babb2018accelerated}, as we will detail in Section \ref{sub:mesh_adaptivity}.
+
+% \ignore{
+% The set of solution operators $\textbf{S}^{\tau}$ are built by recursively merging a Dirichlet-to-Neumann (DtN) operator. This Dirichlet-to-Neumann operator is part of a class of operators called Poincaré-Steklov operators \cite{quarteroni1991theory}. These operators map boundary condition data from one type to another (i.e., Dirichlet-to-Neumann, Neumann-to-Dirichlet, Dirichlet-to-Robin, etc.). The DtN operators allow the domain to be divided into a collection of patches whose union forms the entire domain.
+% }
+
+% To demonstrate the contrast between our implementation and the implementation in \cite{martinsson2019fast} and \cite{gillman2014direct}, we outline the HPS method on a binary tree given in \cite{martinsson2019fast}. The HPS method is broken into two stages: the build stage that is similar to a matrix factorization and the solve stage that is similar to the application of the factorization to a right-hand side vector. There are two necessary building blocks for the build stage: the leaf level computations and the merge process. For the leaf level matrices, a solution matrix is formed that maps Dirichlet data on the boundary $\textbf{g}$ to solution data on the interior $u_{i}$:
+% \begin{align}
+%     \textbf{S}^{\tau} \textbf{g}^{\tau} = \textbf{u}^{\tau}_{i}
+% \end{align}
+% where $\tau$ denotes a patch domain. In \cite{martinsson2019fast}, $\textbf{S}^{\tau}$ is formed from the system coefficient matrix on a patch:
+% \begin{align}
+%     \textbf{S}^{\tau} = -\textbf{A}^{-1}_{i, i} \textbf{A}_{i, e},
+% \end{align}
+% where $i$ and $e$ denote the interior and exterior of the patch, respectively. The other leaf level operator necessary is the Dirichlet-to-Neumann (DtN) matrix $\textbf{T}$. The DtN matrix maps Dirichlet data on the boundary of a patch to Neumann data on the boundary:
+% \begin{align}
+%     \textbf{T}^{\tau} \textbf{g}^{\tau} = \textbf{v}^{\tau}
+% \end{align}
+% In \cite{martinsson2015hierarchical} and \cite{gillman2014direct}, the DtN matrix is computed via four linear maps 
+% \begin{align}
+%     \textbf{T}^{\tau} = \textbf{L}_4 \textbf{L}_3 \textbf{L}_2 \textbf{L}_1.
+% \end{align}
+% $\textbf{L}_1$ is a retabulation from the Gaussian nodes the leaf patches use to a Chebyshev collocation on the boundary
+
+% On a binary tree, the merge process merges two neighboring patches to form parent level patches on the boundary of the parent. In \cite{martinsson2019fast}, this is done by forming a combined linear system and eliminating the points on the interface of the neighboring patches. When merging, child patches are denoted by $\alpha$ and $\beta$ and the parent patch is denoted with $\tau$. Index sets $\textbf{I}_1$, $\textbf{I}_2$, and $\textbf{I}_3$ are formed that include points 1) along the exterior of $\alpha$ and not the interface, 2) along the exterior of $\beta$ and not the interface, and 3) the interface of $\alpha$ and $\beta$. With these index sets, the parent operators are computed from sub-blocks of the children operators:
+% \begin{align}
+%     \textbf{S}^{\tau} &= (\textbf{T}^{\alpha}_{3,3} - \textbf{T}^{\beta}_{3,3})^{-1}
+%     \begin{bmatrix}
+%         -\textbf{T}^{\alpha}_{3,1} & \textbf{T}^{\beta}_{3,2}
+%     \end{bmatrix} \\
+%     \textbf{T}^{\tau} &=
+%     \begin{bmatrix}
+%         \textbf{T}^{\alpha}_{1,1} & \textbf{0} \\
+%         \textbf{0} & \textbf{T}^{\beta}_{1,1} \\
+%     \end{bmatrix}
+%     +
+%     \begin{bmatrix}
+%         \textbf{T}^{\alpha}_{1,3} \\
+%         \textbf{T}^{\beta}_{2,3} \\
+%     \end{bmatrix}
+%     \textbf{S}^{\tau}.
+% \end{align}
+
+% With the merge process outlined, the entire HPS scheme can be detailed. The HPS is then broken into two stages, a build stage and a solve stage. In the build stage, the leaf level patches are recursively merged until all patches have a solution operator. This is similar to a matrix factorization step, and only needs the elliptic operator and the domain discretization to be complete. The solve stage applies the solution operators, starting from the root, to supplied Dirichlet data until all patches have interior solution data. Algorithms and pseudocode are provided in \cite{martinsson2019fast}, \cite{martinsson2015hierarchical}, and \cite{gillman2014direct}.
+
+% \subsection{Advantages of the HPS Method as a Direct Solver}
+\ignore{
+\donna{Do we need this?}
+Most direct methods for solving elliptic PDEs consist of two stages: the build (or factorization) stage and the solve (or application) stage. In the build stage, the factorization of the system matrix $\textbf{A}$ is formed. This is where the bulk of the computation is required. The factorization is then applied in the solve stage to the right-hand side (RHS) vector $\textbf{b}$. The typical advantages of a direct method over an iterative method are:
+\begin{enumerate}
+    \item{The solution is computed in a pre-determined number of steps and does not rely on convergence criteria.}
+    \item{The factorization can be applied to as many RHS vectors as necessary.}
+\end{enumerate}
+}
+The complexity of the solve stage is often $\mathcal{O}(N)$, where $N$ is the size of system matrix, or the total degrees of freedom. This comes at the cost of a more expensive build stage, where the matrix factorization is computed and stored. The build stage of the HPS method can be reduced to $\mathcal{O}(N^{3/2})$ or even $\mathcal{O}(N)$ depending on the implementation of the structure of the DtN operators, with the solve stage remaining at $\mathcal{O}(N)$ \cite{gillman2014direct}. 
+
+Using a direct solver on a dynamically refined mesh presents some challenges to the advantages of a direct solver versus an iterative one. When the mesh changes, either as a result of a time step or some other refinement criteria, the factorization must be recomputed. Most iterative methods can still use the previous solution as an initial starting point for convergence. The HPS method can adapt the set of solution operators efficiently, as the solution operator is built from a recursive merge of children domains. When a section of the mesh changes, only the ancestors of the regions that are changed need to have their solution operator recomputed.

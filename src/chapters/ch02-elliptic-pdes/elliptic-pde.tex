@@ -1,0 +1,30 @@
+\section{The Elliptic Partial Differential Equation}
+\label{sec:the-elliptic-pde}
+
+Partial differential equations are classified by their highest order derivative terms. A second order, linear differential equation can be written as
+\begin{align*}
+    A(\textbf{x}) \frac{\partial^2 u(\textbf{x})}{\partial x^2} + B(\textbf{x}) \frac{\partial^2 u(\textbf{x})}{\partial x \partial y} + C(\textbf{x}) \frac{\partial^2 u(\textbf{x})}{\partial y^2} + ... \\
+    ... + D(\textbf{x}) \frac{\partial u(\textbf{x})}{\partial x} + E(\textbf{x}) \frac{\partial u(\textbf{x})}{\partial y} + F(\textbf{x}) u(\textbf{x}) + G(\textbf{x}) &= 0.
+\end{align*}
+Second-order linear PDEs are classified according to the value of the determinant of this expression:
+\begin{align*}
+    B^2 - 4AC &< 0,\ \ \ \text{Elliptic} \\
+    B^2 - 4AC &= 0,\ \ \ \text{Parabolic} \\
+    B^2 - 4AC &> 0,\ \ \ \text{Hyperbolic}
+\end{align*}
+
+In this overview, we will consider common elliptic PDEs such as the Poisson equation
+\begin{align}
+    \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right) &= f(\textbf{x}),
+    \label{eq:variable_poisson}
+\end{align}
+and the Helmholtz equation
+\begin{align}
+    \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right) + \lambda(\textbf{x}) u(\textbf{x}) &= f(\textbf{x}),
+    \label{eq:variable_helmholtz}
+\end{align}
+where $\textbf{x} = [x, y]$, $\nabla = (\frac{\partial}{\partial x}, \frac{\partial}{\partial y})$, $\nabla^2 = \nabla \cdot \nabla = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}$, and $\textbf{x} \in \Omega \subset \mathcal{R}^2$. When $\beta(\textbf{x}) = 0$ and $\lambda(\textbf{x}) = \kappa^2$ ($\kappa$ is a constant), these expressions reduce to the more classical, constant coefficient versions of the Poisson and Helmholtz equations. When the right-hand side function $f(\textbf{x}) = 0$, these are homogeneous problems, where \refeq{eq:variable_poisson} is reduced to the Laplace equation. Each of these PDEs are subject to the appropriate boundary conditions on the domain boundary $\partial \Omega = \Gamma$. Such boundary conditions (BCs) can either be Dirichlet (Type-I), Neumann (Type-II), or Robin/Mixed (Type-III) BCs. Dirichlet problems impose the value of $u$ on the boundaries, Neumann problems impose the flux or normal gradient $\partial_n u$ on the boundaries, while Robin problems impose a linear combination of Dirichlet and Neumann type BCs.
+
+Although analytical solutions exist for some (simple) variations of the problems above, we are interested in looking at numerical methods to solve these equations. To do so, we look at various ways to discretize the domain $\Omega$. This discretization will lead to a linear system of equations which we will solve with numerical methods, taking advantage of the sparsity and structure of the associated system.
+
+% We will look at node based, cell based, element based, and spectral based approaches. These approaches are called the finite difference method, finite volume method, finite element method, and the spectral method, respectively. We will refer to Figure \ref{fig:discretization_methods} for a diagram of each.

@@ -1,0 +1,80 @@
+\section{Overview of Current Elliptic PDE Solvers}
+
+In order to be able to generally address solving elliptic partial differential equations, we will generalize to the following expression
+\begin{align}
+    \begin{cases}
+        \mathcal{A} u(\textbf{x}) = f(\textbf{x}), &\textbf{x} \in \Omega \\
+        u(\textbf{x}) = g(\textbf{x}), &\textbf{x} \in \partial \Omega = \Gamma
+    \end{cases}
+    \label{bvp}
+\end{align}
+where $\mathcal{A}$ is an elliptic differential operator, $u$ is the function we wish to solve for, $f$ is a body load or driving force function, and $g$ are prescribed Dirichlet boundary conditions on the boundary of the domain. We will refer to this problem as the boundary value problem, or the Dirichlet problem.
+
+With this problem set up, we now look at methodologies to solve this elliptic BVP.
+
+\subsection{Iterative vs. Direct Solvers}
+
+There are many ways to solve elliptic PDEs, which can all be (loosely) grouped into two classes of solution methods: iterative methods and direct methods. And to generalize these two classes, iterative methods attempt to solve the elliptic PDE through a series of increasingly better approximations, while direct methods invert the elliptic operator $\mathcal{A}$ or apply a constructed inverse to the right hand side. Both methods have respective advantages and drawbacks.
+
+To demonstrate both classes, we will look at solving the linear system generated from discretizing the boundary value problem \ref{bvp}. Doing so yields
+\begin{align}
+\textbf{A} \textbf{u} = \textbf{b}
+\end{align}
+where $\textbf{A} \in \mathbb{R}^{N \times N}$ is a coefficient matrix that encodes the operator $\mathcal{A}$, $\textbf{u} = u_i = u(x_i)$ for $i \in \textbf{I}_x$ and index set $\textbf{I}_x$ for the discrete domain, and $\textbf{b}$ is a vector with the right hand side information $f$ and encoded boundary information $g$. The goal here is to solve for $\textbf{u}$ where we hope to take advantage of the structure of $\textbf{A}$ somehow.
+
+\subsubsection{Iterative Methods}
+
+In the class of iterative methods, the goal is to form better and better approximations to the solution by somehow adjusting the previous iteration. To motivate some classical iterative methods, let's look at a modification to our linear system,
+\begin{align}
+\textbf{A} = \textbf{M} - \textbf{N} \Rightarrow \textbf{M} \textbf{u} = \textbf{N} \textbf{u} + \textbf{b},
+\end{align}
+which suggests the following recursion relationship for the next iteration:
+\begin{align}
+\textbf{M} \textbf{u}^{k+1} &= \textbf{N} \textbf{u}^k + \textbf{b} \\
+\textbf{u}^{k+1} &= \textbf{M}^{-1} \textbf{N} \textbf{u}^k + \textbf{M}^{-1} \textbf{b}.
+\end{align}
+The idea is to choose $\textbf{M}$ that captures as much of $\textbf{A}$ as possible, but is still easy and quick to invert.
+
+Taking advantage of the structure of $\textbf{A}$, we can split $\textbf{A}$ into $\textbf{A} = \textbf{D} - \textbf{L} - \textbf{U}$, where $\textbf{D}$ is the diagonal components of $\textbf{A}$, and $\textbf{L}$ and $\textbf{U}$ are the lower and upper pieces, respectively. The allows us to define the following common iterative methods called splitting methods:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ | l | l | l |}
+        \hline
+        Jacobi & $\textbf{M} = \textbf{D}$ & $\textbf{N} = \textbf{L} + \textbf{U}$ \\
+        Gauss-Sidel & $\textbf{M} = \textbf{D} - \textbf{L}$ & $\textbf{N} = \textbf{U}$ \\
+        Successive Over Relaxation & $\textbf{M} = \frac{1}{\omega}(\textbf{D} - \omega \textbf{L})$ & $\textbf{N} = \frac{1}{\omega} \big( (1 - \omega) \textbf{D} + \omega \textbf{U} \big)$ \\
+        \hline
+    \end{tabular}
+    \caption{Iterative Methods: Splitting Methods}
+\end{table}
+
+Another class of iterative methods are called Krylov subspace methods. The Krylov space is a space defined as
+\begin{align}
+\mathcal{K}_k = \text{span} \{ \textbf{r}_0, \textbf{A} \textbf{r}_0, \textbf{A}^2 \textbf{r}_0, ..., \textbf{A}^{k-1} \textbf{r}_0 \}
+\end{align}
+based on the initial residual $\textbf{r}_0 = \textbf{b} - \textbf{A} \textbf{u}^{(0)}$. The goal is to take the next iteration from this particular space. The two common Krylov methods we give an overview of here are the conjugate gradient method and the Generalized Minimal Residual (GMRES) method. In the conjugate gradient method, the approximation is adjusted by a conjugate direction, or a vector that is conjugate with respect to $\textbf{A}$. This vector is called the search direction $\textbf{p}$ and the distance to travel $\alpha$ is computed by solving a quadratic minimization problem. The GMRES method builds up an orthogonal matrix $\textbf{Q}$ through a process called the Arnoldi iteration. The Arnoldi iteration forms $\textbf{A} = \textbf{Q} \textbf{H} \textbf{Q}^*$ for orthogonal matrix $\textbf{Q}$ and Hessenberg matrix $\textbf{H}$. The next iteration is found via $\textbf{Q} \textbf{y}$ where $\textbf{y}$ is found from a least squares problem involving $\textbf{H}$. These methods are summarized in Table \ref{tab:ksm}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ | l | l |}
+        \hline
+        Conjugate Gradient & $\textbf{u}^{(k+1)} = \textbf{u}^{(k)} + \alpha^{(k)} \textbf{p}^{(k)}$ \\
+        GMRES & $\textbf{u}^{(k)} = \textbf{Q}^{(k)} \textbf{y}$ \\
+        \hline
+    \end{tabular}
+    \caption{Iterative Methods: Krylov Subspace Methods}
+    \label{tab:ksm}
+\end{table}
+
+The final iterative method we consider is called the multigrid method. [TODO: Write about the multigrid method]
+
+\subsubsection{Direct Methods}
+
+The main feature of a direct method is it's ability to invert or factor $\textbf{A}$ and find the exact solution to the system in a finite number of steps. Direct methods have various advantages over iterative methods, as well as some drawbacks. We'll address these advantages and disadvantages as we look at some common direct methods from \cite{leveque2007finite}, \cite{martinsson2019fast}, and \cite{trefethen1997numerical}.
+
+Perhaps the most obvious and straightforward direct method is an LU decompositon. This works by factoring the coefficient matrix into a lower and upper triangular matrix: $\textbf{A} = \textbf{L} \textbf{U}$. The idea is to use Gaussian elimination to eliminate entries below the main diagonal, and then use back-substituiton to solve for each entry in $\textbf{u}$. Naively, an LU-decomposition requires $\mathcal{O}(N^3)$ floating point operators and thus is impractical for large matricies. Plus, it does little to take advantage of the sparsity of $\textbf{A}$. Other matrix factorizations include the QR-decomposition, $\textbf{A} = \textbf{Q} \textbf{R}$, and the singular value decomposition, $\textbf{A} = \textbf{U} \boldsymbol{\Sigma} \textbf{V}^*$. The next natural improvement is to use pivoting to eliminate unnecessary operations. This takes the form $\textbf{P}^* \textbf{A} \textbf{P} = \textbf{L} \textbf{U}$. When $\textbf{A}$ is banded, we can form $\textbf{P}$ to take advantage of this, leading to a method called nested dissection.
+
+[TODO: Write about nested dissection]
+
+Direct methods have various advantages over iterative methods, although often with a cost. A huge incentive for using a direct method is the ability to form an inverse or factorization of $\textbf{A}$, which can then be applied to as many right-hand side vectors $\textbf{b}$ as desired. This is great for applications with changing boundary conditions or in model optimizations. However, the cost to build such ``solution operators", as well as computer memory requirements, is a huge drawback. This has motivated recent work in fast, direct solvers including algorithms such as the Hierarchical Poincaré-Steklov method that we will discuss next.

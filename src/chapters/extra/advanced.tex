@@ -1,0 +1,41 @@
+\section{Extensions to Modern Solution Methods}
+\label{sec:extensions}
+
+More recent work in direct methods for elliptic PDEs has resulted in more efficient, more optimal, and more applicable implementations of methods like the multigrid and the HPS method. These include ideas like accelerating performance to linear asymptotic performance (\cite{gillman2014direct}), using these methods on adaptive grids (\cite{geldermans2019adaptive}, \cite{popinet2015quadtree}), and combining spectral methods and the HPS method on unstructured meshes (\cite{fortunato2020ultraspherical}).
+
+\subsection{Accelerating the Hierarchical Poincaré-Steklov Method}
+
+As Gillman notes in \cite{gillman2014direct}, the most expensive part of the HPS algorithm is in the merge operation. At the top level, computing the merged operators involves dense matricies of $\mathcal{O}(N^{1/2}) \times \mathcal{O}(N^{1/2})$ for an overall cost of $\mathcal{O}(N^{3/2})$. It is possible to take advantage of the internal structure of these matricies to accelerate the matrix algebra. Gillman notes that the ``off-diagonal blocks of these matricies are to, high precision, rank deficient" and can be represented in a ``data-sparse" format called hierarchically block seperable (HBS) (\cite{gillman2014direct}). This data-sparse format is given as a factorization
+\begin{align}
+    \textbf{H}_{\sigma, \tau} &= \textbf{U}_{\sigma} \tilde{\textbf{H}}_{\sigma, \tau} \textbf{V}_{\tau}^*.
+\end{align}
+If this holds, then the block seperable matrix $\textbf{H}$ admits the following block factorization
+\begin{align}
+    \textbf{H} &= \underline{\textbf{U}} \tilde{\textbf{H}} \underline{\textbf{V}}^* + \textbf{D},
+\end{align}
+where $\underline{\textbf{U}} = \text{diag}(\textbf{U}_1, \textbf{U}_2, ..., \textbf{U}_p), \underline{\textbf{V}} = \text{diag}(\textbf{V}_1, \textbf{V}_2, ..., \textbf{V}_p), \underline{\textbf{D}} = \text{diag}(\textbf{D}_1, \textbf{D}_2, ..., \textbf{D}_p)$
+and
+\begin{align}
+    \tilde{\textbf{H}} &=
+    \begin{bmatrix}
+        \textbf{0}       & \tilde{\textbf{H}_{1,2}} & \tilde{\textbf{H}_{1,3}} & ...    & \tilde{\textbf{H}_{1,p}} \\
+        \tilde{\textbf{H}_{2,1}} & \textbf{0}       & \tilde{\textbf{H}_{2,3}} & ...    & \tilde{\textbf{H}_{2,p}} \\
+        \tilde{\textbf{H}_{3,1}} & \tilde{\textbf{H}_{3,2}} & \textbf{0}       & ...    & \tilde{\textbf{H}_{3,p}} \\
+        \vdots           & \vdots           & \vdots           & \ddots & \vdots           \\
+        \tilde{\textbf{H}_{p,1}} & \tilde{\textbf{H}_{p,2}} & \tilde{\textbf{H}_{p,3}} & ...    & \textbf{0}       \\
+    \end{bmatrix}
+\end{align}
+
+Perhaps the most important property of these HBS matricies is that not only is $\textbf{H}$ HBS, but $\tilde{\textbf{H}}$ is HBS also. As well as the middle matrix of it's factorization, and so on. This ``telescoping" property is what allows us to both store HBS matricies in a data-sparse format and compute/apply inverses and matricies fast. Gillman shows in \cite{gillman2012direct} several algorithms on how to perform matrix-vector multiplication, matrix inversion, and apply an HBS inverse. Each of these algorithms can be used in the HPS method build and solve stages to accelerate the linear algebra. Due to the low-rank structure of HBS matricies, even further optimizations are possible. Xia in \cite{xia2013randomized} extend the topic of randomized matricies to HBS matricies to achieve further speed up and better data storage.
+
+\subsection{Adaptive Hierarchical Methods}
+
+Adaptive meshes are also possible on hierarchical decomposition schemes. The hierarchical nature of the multigrid method and the HPS method allow them to be used on adaptive grids effectively.
+
+In \cite{popinet2015quadtree}, Popinet et al. use a quadtree approach to decompose the domain into a hierarchical grid. In locations where more refinement is necessary, they refine the mesh more. For example, in \cite{popinet2015quadtree}, they are solving the Serre-Green-Naghdi model (we will show this as an application in \ref{sec:applications}) which models shallow water equations. As they are looking at a tsunami traveling across the surface of the earth, refinement near the location of the wave fronts is necessary, but without having to have very dense meshing elsewhere. Thus, they use a multigrid method on a dynamic adaptive mesh.
+
+Additionally, the HPS method has been modified to be used on an adaptive mesh. In \cite{geldermans2019adaptive}, Geldermans et al., they show how to use the HPS method on a quadtree of patches. They demonstrate the merge operation between patches on different levels, as well as discuss proper interpolation schemes for their choice of mesh (a Chebyshev tensor product). In addition, the global solution operator formed by this adaptive HPS method can still be applied to multiple right-hand side problems.
+
+\subsection{The Ultraspherical Spectral Element Method}
+
+The ultraspherical spectral element method (ultraSEM) presented by Fortunato et al. is another highly practical extension of the HPS method. In \cite{fortunato2020ultraspherical}, they apply their ultraspherical spectral element method from \cite{olver2013fast} to the HPS method. Namely, by using spectral discretization on leaf nodes that can also be mapped quadrilaterals and triangles, and using the same merging process as the HPS method, they show the HPS method also works on mapped, unstructured meshes.

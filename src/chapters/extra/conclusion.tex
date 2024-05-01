@@ -1,0 +1,6 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+The Hierarchical Poincaré-Steklov method is robust and is able to effectively scale up and accelerate any solution methodology for elliptic PDEs. As originally presented, the HPS method is accurate and already has good asymptotic scaling. Furthermore, it can be accelerated to $\mathcal{O}(N)$ performance due to the hierarchical structure of the matricies used. Research into and extensions of the HPS method are still ongoing, showing the promise and versitility of the method. As a direct solver, it holds particular advantages over iterative solvers, namely the ability to build an in-memory solution operator to apply to problems with different boundary conditions, multiple right-hand sides, or even at different times steps.
+
+We also presented our motivation for looking into the HPS method as the direct solver for the Serre-Green-Nagdhi model. The HPS method can be used at each time step in the finite volume time stepping to solve for the dispersive term correction to the shallow water equations. The ability to build a solution operator once per static mesh to apply at each time step makes this method ideal for solving the elliptic PDE.
