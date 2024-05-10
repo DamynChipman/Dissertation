@@ -17,9 +17,10 @@ If $\Omega$ is on a logically rectangular domain (i.e. 2D Cartesian plane), perh
 \end{align}
 where $N_x, N_y$ is the number of points in the x- and y-direction and grid spacing is defined as
 \begin{align}
-    \Delta x = \frac{x_u - x_l}{N_x - 1} \ \ \ \Delta y = \frac{y_u - y_l}{N_y - 1}.
+    \Delta x &= \frac{x_u - x_l}{N_x - 1} \\
+    \Delta y &= \frac{y_u - y_l}{N_y - 1}.
 \end{align}
-These points are shown in the first plot of Figure \ref{fig:discretization_methods}. This leads to the finite difference method, where the function to approximate is solved for at each mesh point. In the finite difference approach, the expressions for the derivatives in a PDE are replaced with Taylor Series approximations. For example, a second order accurate, central-difference approximation to the second derivative can be given as
+These points are shown in the first plot of Figure \ref{fig:discretization_methods}. This type of discretization is known as the {\em finite difference method}. \damyn{(Cite something here?)}. In the finite difference approach, the expressions for the derivatives in a PDE are replaced with Taylor series approximations. For example, a second order accurate, central-difference approximation to the second derivative can be given as
 \begin{align}
     \frac{\partial^2 u}{\partial x^2} &= \frac{u(x - \Delta x, y) - 2u(x, y) + u(x + \Delta x, y)}{\Delta x^2} + \mathcal{O}(\Delta x^2)
 \end{align}
@@ -27,12 +28,44 @@ and if we let $u(x_i, y_j) = u_{i,j}$, then we can write this as
 \begin{align}
     \frac{\partial^2 u}{\partial x^2} &= \frac{u_{i-1,j} - 2u_{i,j} + u_{i+1,j}}{\Delta x^2} + \mathcal{O}(\Delta x^2).
 \end{align}
-Using these Taylor Series expansions, we can replace the continuous Poisson's equation \ref{eq:poisson} with the discrete system of equations:
+Using these Taylor Series expansions, we can replace the continuous Poisson's equation \ref{eq:variable_poisson} with the discrete system of equations:
 \begin{align}
     \frac{u_{i-1,j} - 2u_{i,j} + u_{i+1,j}}{\Delta x^2} + \frac{u_{i,j-1} - 2u_{i,j} + u_{i,j+1}}{\Delta y^2} &= f_{i,j}.
     \label{eq:poisson_FD}
 \end{align}
-For each grid point $i,j = 0,...,N - 1$, this expression forms a linear system with $(N_x-1) \times (N_y-1)$ unknowns.
+For each grid point $i = 0, ..., N_x - 1$, $j = 0, ..., N_y - 1$ this expression forms a linear system with $(N_x-1) \times (N_y-1)$ unknowns.
+
+The system that is formed from this discretization is sparse and banded. For example, let $N_x = N_y = N$ for simplicity (thus $\Delta x = \Delta y = h$). Index the vector $\textbf{u}$ first by rows, then by columns, such that
+\begin{align}
+    \textbf{u} = [u_{0,0}, ..., u_{N - 1, 0}, u_{0, 1}, ..., u_{N - 1, 1}, ..., u_{0, N - 1}, ..., u_{N - 1, N - 1}]^T.
+\end{align}
+The corresponding linear system from \ref{eq:poisson_FD} is the following:
+\begin{align}
+    \textbf{A} &= \frac{1}{h^2}
+    \begin{bmatrix}
+        \textbf{D} & \textbf{I}_{N} & \textbf{0} & ... & \textbf{0} \\
+        \textbf{I}_{N} & \textbf{D} & \textbf{I}_{N} & ... & \textbf{0} \\
+        \textbf{0} & \textbf{I}_{N} & \textbf{D} & ... & \textbf{0} \\
+        \vdots & \vdots & \vdots & \ddots & \vdots \\
+        \textbf{0} & \textbf{0} & \textbf{0} & ... & \textbf{D}
+    \end{bmatrix}
+\end{align}
+where
+\begin{align}
+    \textbf{D} &= 
+    \begin{bmatrix}
+        -4 & 1 & 0 & ... & 0 \\
+        1 & -4 & 1 & ... & 0 \\
+        0 & 1 & -4 & ... & 0 \\
+        \vdots & \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & 0 & ... & -4
+    \end{bmatrix}.
+\end{align}
+We also index the RHS similarly to $u(x,y)$ resulting in a RHS vector $\textbf{f}$. This leads to the linear system
+\begin{align}
+    \textbf{A} \textbf{u} = \textbf{f} + \textbf{b}
+\end{align}
+where $\textbf{b}$ contains any updates necessary for any type of boundary condition.
 
 \subsection{Finite Volume}
 
@@ -40,20 +73,24 @@ In a finite volume scheme, the domain is broken up into cells, which can be stru
 \begin{align}
     \frac{\partial}{\partial t} \int_{\Omega_i} \textbf{q} d\Omega_i + \int_{\Gamma_i} \textbf{F}(\textbf{q}) \cdot \hat{n}_i d\Gamma_i + \int_{\Omega_i} \textbf{s} d\Omega_i = 0,
 \end{align}
-where $\Omega_i$ and $\Gamma_i$ are the cell domains and boundaries, respectively, $\textbf{q}$ is a vector of quantities in each cell, \textbf{F} is a flux function, and $\textbf{s}$ is the cell's source term. In the second plot of Figure \ref{fig:discretization_methods}, the blue dashed lines are the cell boundaries, and the red points are the cell centers. For up to second order schemes, the cell average is collocated at the center of the cell; this changes for higher order schemes.
+where $\Omega_i$ and $\Gamma_i$ are the cell domains and boundaries, respectively, $\textbf{q}$ is a vector of quantities in each cell, $\textbf{F}$ is a flux function, and $\textbf{s}$ is the cell's source term. In the second plot of Figure \ref{fig:discretization_methods}, the blue dashed lines are the cell boundaries, and the red points are the cell centers. For up to second order schemes, the cell average is collocated at the center of the cell; this changes for higher order schemes.
 
 \subsection{Finite Element}
 
-In a finite element scheme, the domain is broken into elements. These elements can also be structured or unstructured polygons (2D) or polyhedrons (3D) as in the finite volume method. The PDE to solve is converted into a weak form by multiplying the PDE by a test function $v(x,y)$ and integrating over the domain. For example, converting Poisson's equation into the weak form looks like this
+In a finite element scheme, the domain is broken into elements. These elements can also be structured or unstructured polygons (2D) or polyhedrons (3D), similar to the finite volume method. The PDE to solve is converted into a weak form by multiplying the PDE by a test function $v(x,y)$ and integrating over the domain:
 \begin{align}
-    \int_{\Omega} \frac{\partial^2 u}{\partial x^2} v d\Omega + \int_{\Omega} \frac{\partial^2 u}{\partial y^2} v d\Omega &= \int_{\Omega} f v d\Omega \\
-    \Rightarrow \int_{\Omega} \frac{\partial u}{\partial x} \frac{\partial v}{\partial x} d\Omega + \int_{\Omega} \frac{\partial u}{\partial y} \frac{\partial v}{\partial y} d\Omega - \Big[ \frac{\partial u}{\partial x} v \Big] \Big|_{x_l}^{x^u} - \Big[ \frac{\partial u}{\partial y} v \Big] \Big|_{y_l}^{y^u} &= \int_{\Omega} f v d\Omega,
+    \int_{\Omega} v \nabla^2 u d\Omega &= \int_{\Omega} vf d\Omega.
 \end{align}
-where integration by parts is used to transfer a derivative to the test function. The idea behind the finite element method is to use shape or basis functions inside each element (defined over the entire element)
+Green's Theorem (i.e., integration by parts) is used to break the LHS into integrals on the domain $\Omega$ and the boundary $\partial \Omega = \Gamma$:
+\begin{align}
+    -\int_{\Omega} \nabla v \cdot \nabla u d\Omega + \int_{\Gamma} v \frac{\partial u}{\partial n} d\Gamma &= \int_{\Omega} vf d\Omega
+    \label{eq:poisson_weak_form}
+\end{align}
+The idea behind the finite element method is to use basis functions
 \begin{align}
     u(x,y) \approx \bar{u} = \sum_{k=1}^{N_k} c_k \phi(x,y)
 \end{align}
-and to use the same basis $\phi$ as the test function $v$ (this is called the Galerkin principle). Upon substitution of the above into the weak form, and integrating the basis function with either quadrature or with analytical expressions, a linear system is formed for the coefficients $c_k$. Often, the coefficients are the actual function values $c_k = u_{i,j}$.
+inside each element $\Omega_i$, where $\Omega = \cup_{i = 1}^{N_{\text{elem}}} \Omega_i$. When the same basis functions for the test functions $v$ are also used, this leads to the Galerkin finite element method. Upon substitution of the above into \ref{eq:poisson_weak_form}, and integrating the basis function with either quadrature or with analytical expressions, a linear system is formed for the coefficients $c_k$.
 
 There are several variations of the finite element method. The method explained above forms a global linear system involving all elements. To avoid this, mapping a physical element to some reference element, makes the contributions from a single element only influence itself and its neighbors. This makes the coefficient matrix in the linear system much more sparse and structured, making it easier to solve. Additionally, by not imposing continuity across element boundaries, one arrives at the discontinuous Galerkin method, where the discontinuities are handled through element fluxes. By choosing certain shape or basis functions, one can derive different variations of the finite element method, including the B-spline finite element method \cite{kagan1998new} and the spectral element method \cite{patera1984spectral}.
 

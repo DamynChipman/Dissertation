@@ -26,6 +26,7 @@
 \usepackage{siunitx}
 \usepackage{xspace}
 \usepackage{mathtools}
+\usepackage{microtype}
 % \usepackage{acro}
 % probably a good idea for the nomenclature entries:
 % \acsetup{first-style=short}
@@ -34,6 +35,7 @@
     \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
 } % this command keep latexmk from erroring when \input is missing
 
+\newcommand{\codename}[1]{\mbox{\texttt{#1}}}
 \newcommand{\creflastconjunction}{, and~}
 \newcommand{\alttext}[1]{{\color{blue}#1}}
 \newcommand{\damyn}[1]{{\color{blue}#1}}
@@ -53,6 +55,10 @@
 
 \newcommand{\real}{\ensuremath{\mathbb R}\xspace}
 \newcommand{\DtN}{Dirichlet-to-Neumann\xspace}
+
+\newcommand{\ElseIf}{\ElsIf}
+\newcommand{\rfirst}{$R_{\text{first}}$}
+\newcommand{\rlast}{$R_{\text{last}}$}
 
 \newcommand{\Ttau}{\ensuremath{\mathbf T^{\tau}}\xspace}
 \newcommand{\Stau}{\ensuremath{\mathbf S^{\tau}}\xspace}
@@ -183,9 +189,9 @@
 %------------------------------------------------------------------------------
 \degreetype{Doctor of Philosophy}
 %------------------------------------------------------------------------------
-\discipline{Computing --- Computational Science and Engineering}
+\discipline{Computing}
 %------------------------------------------------------------------------------
-\title{A Fast and Scalable Direct Solver for Elliptic Partial Differential Equations on a Hierarchy of Adaptively Refined 2D Finite Volume Meshes} % use correct capitalization
+\title{An Adaptive and Parallel Direct Solver for Elliptic Partial Differential Equations} % use correct capitalization
 %------------------------------------------------------------------------------
 \advisor{Donna Calhoun}{Ph.D.}
 \committeeMemberA{Michal Kopera}{Ph.D.}
@@ -256,7 +262,7 @@
 \input{chapters/ch02-elliptic-pdes/numerical-methods.tex}
 \input{chapters/ch02-elliptic-pdes/solution-methods.tex}
 
-\chapter{The Quadtree-Adaptive HPS Method on a Hierarchy of 2D Finite Volume Meshes}
+\chapter{The Quadtree-Adaptive HPS Method}
 \label{chap:qahps}
 \input{chapters/ch03-quadtree-adaptive-hps/introduction.tex}
 \input{chapters/ch03-quadtree-adaptive-hps/quad-donna.tex}
@@ -272,12 +278,12 @@
 \input{chapters/ch04-adaptive-rebuild-hps/numerical-experiments.tex}
 \input{chapters/ch04-adaptive-rebuild-hps/conclusion.tex}
 
-\chapter{A Parallel Implementation of the Quadtree-Adaptive HPS Method for Distributed Memory Platforms}
+\chapter{A Parallel Implementation of the Quadtree-Adaptive HPS Method}
 \label{chap:parallel}
 \input{chapters/ch05-parallel-hps/introduction.tex}
+\input{chapters/ch05-parallel-hps/hps-overview.tex}
 \input{chapters/ch05-parallel-hps/parallel-algorithm.tex}
-\input{chapters/ch05-parallel-hps/implementation-details.tex}
-\input{chapters/ch05-parallel-hps/scaling-analysis.tex}
+\input{chapters/ch05-parallel-hps/parallel-results.tex}
 \input{chapters/ch05-parallel-hps/conclusion.tex}
 
 \chapter{Applications of the HPS Method to Coupled Systems of Elliptic PDEs}
@@ -291,7 +297,7 @@
 % bibliography:
 % \cleardoublepage
 \addcontentsline{toc}{chapter}{References}
-\bibliography{example}
+\bibliography{bibliographies/references.bib}
 \bibliographystyle{authordate1}
 %------------------------------------------------------------------------------
 % \cleardoublepage

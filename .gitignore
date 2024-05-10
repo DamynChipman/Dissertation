@@ -12,4 +12,4 @@ src/main.tex
 **/*.nlo
 **/*.pdf
 **/*.gz
-
+**/*.DS_Store
