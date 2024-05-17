@@ -26,7 +26,7 @@
 \usepackage{siunitx}
 \usepackage{xspace}
 \usepackage{mathtools}
-\usepackage{microtype}
+% \usepackage{microtype}
 % \usepackage{acro}
 % probably a good idea for the nomenclature entries:
 % \acsetup{first-style=short}
@@ -43,6 +43,7 @@
 \newcommand{\ignore}[1]{}
 \newcommand{\pforest}{{\tt p4est}\xspace}
 
+\newcommand{\refchap}[1]{Chapter \ref{#1}}
 \newcommand{\refsec}[1]{Section \ref{#1}}
 \newcommand{\reffig}[1]{Figure \ref{#1}}
 \newcommand{\refalg}[1]{Algorithm \ref{#1}}
@@ -196,7 +197,6 @@
 \advisor{Donna Calhoun}{Ph.D.}
 \committeeMemberA{Michal Kopera}{Ph.D.}
 \committeeMemberB{Grady Wright}{Ph.D.}
-% \committeeMemberC{Jake Anderson}{Ph.D.}
 \committeeMemberC{Kirk Ketelsen}{Ph.D.}
 %------------------------------------------------------------------------------
 \dean{Scott Lowe}{Dean of the Graduate College}
@@ -215,10 +215,9 @@
 \submittalsheet
 %------------------------------------------------------------------------------
 \setcounter{page}{4}
-% \input{preliminaries/dedication.tex}
-% \input{preliminaries/acknowledgment.tex}
-% \input{preliminaries/autobiographics.tex}
-% \input{preliminaries/abstract.tex}
+\input{preliminaries/dedication.tex}
+\input{preliminaries/acknowledgment.tex}
+\input{preliminaries/abstract.tex}
 %------------------------------------------------------------------------------
 % \cleardoublepage
 \tableofcontents

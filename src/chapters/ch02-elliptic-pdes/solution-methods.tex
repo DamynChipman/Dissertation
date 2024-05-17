@@ -9,6 +9,7 @@ The discretization methods described in \refsec{sec:numerical-methods-for-ellipt
 where $\textbf{A} \in \mathbb{R}^{N \times N}$ is a coefficient matrix formed from one of the discretization methods, $N$ is the number of degrees of freedom, $\textbf{u} = u_i = u(x_i)$ for $i \in \textbf{I}_x$, index set $\textbf{I}_x$ for the discrete domain, and $\textbf{b}$ is the right-hand side vector encoded with the boundary conditions and the inhomogeneous function $f(\textbf{x})$. The goal is to solve for $\textbf{u}$ where we take advantage of the sparsity and structure of $\textbf{A}$. We organize the various methods into the following three categories: 1) iterative methods, 2) direct methods, and 3) hierarchical methods.
 
 \subsection{Iterative Methods}
+\label{sub:iterative-methods}
 
 Iterative methods start with an initial guess of a solution to \ref{eq:ls} and correct the iterate until convergence to a specified tolerance. The simplest iterative methods are called splitting methods where the linear system is modified according to
 \begin{align}
@@ -57,6 +58,7 @@ Most iterative methods are considered ``matrix-free" methods. A ``matrix-free" m
 As finite difference discretization schemes for elliptic PDEs lead to sparse matrices, the application of $\textbf{A}$ to a vector can be done in $\mathcal{O}(N)$ operations, where $N$ is the number of unknowns in the vector. Thus, the performance for most iterative methods is approximately $\mathcal{O}(N \times N_{iter})$, where $N_{iter}$ is the number of iterations required for a specified tolerance. However, as $N$ gets larger, often so does $N_{iter}$, leading to poor scaling, as noted in \cite{martinsson2019fast}. In addition, iterative methods may not always converge for a given initial guess or structure of $\textbf{A}$, which make them unfavorable for ``black-box" implementations for linear solvers.
 
 \subsection{Direct Methods}
+\label{sub:direct-methods}
 
 Motivation for direct solvers stems from wanting to improve upon the disadvantages of iterative methods. Martinsson notes in \cite{martinsson2004fast} some advantages to using direct methods over iterative ones:
 \begin{itemize}
@@ -75,10 +77,12 @@ For a finite difference discretization of elliptic PDEs, $\textbf{A}$ is banded 
 Compared to iterative methods, direct methods will terminate in a finite number of steps. Direct methods are more fit for ``black-box" implementations. However, because most direct methods need to explicitly form $\textbf{A}$, they are more difficult to implement with limited computing resources. Indeed, going to higher dimensions and higher orders often dramatically increases memory and compute requirements.
 
 \subsection{Hierarchical Methods}
+\label{sub:hierarchical-methods}
 
 The methods grouped under hierarchical methods attempt to accelerate some of the ideas from iterative and direct methods by breaking the problem into a hierarchy of subproblems. By recursively breaking the original problem into smaller subproblems, significant improvements can be made in complexity and performance. We'll talk about three hierarchical methods here: the multigrid method, nested dissection, and the Hierarchical Poincaré-Steklov (HPS) method.
 
 \subsubsection{The Multigrid Method}
+\label{subsub:multigrid-method}
 
 The multigrid method was introduced by Brandt in \cite{brandt1977multi}. It has been widely used in various applications and for all types of solution methods. Briggs in \cite{briggs2000multigrid} gives an overview and tutorial of the multigrid method.
 
@@ -98,6 +102,7 @@ In what is called the ``full multigrid" method, the process starts on the coarse
 The multigrid method allows one to accelerate an iterative solver. Multigrid methods are very effective as pre-conditioners for iterative methods. This is the general pattern of hierarchical methods: the ability to use classical iterative and direct methods on smaller grids where they perform well, and then ``scale" them up to larger problem sizes.
 
 \subsubsection{Nested Dissection}
+\label{subsub:nested-dissection}
 
 The nested dissection method formulated by George in \cite{george1973nested} is a direct method that builds upon Gaussian elimination for problems on a grid. It is also the basis for forming what is called the multifrontal method. By taking advantage of the ordering of points on a grid, one can permute $\textbf{A}$ to first eliminate points that split the mesh into two unconnected meshes. This permutation takes the form of $\textbf{P}^* \textbf{A} \textbf{P}$, where the goal is to form $\textbf{P}$ to reorganize $\textbf{A}$ in a way that eliminates points in an efficient manner.
 
@@ -106,6 +111,7 @@ To detail nested dissection better, consider an $N \times N$ mesh such as a fini
 Nested dissection was first introduced by George in \cite{george1973nested}, and further generalized by Lipton et al. in \cite{lipton1979generalized}. Martinsson has a tutorial on nested dissection in \cite{martinsson2019fast}. In fact, nested dissection served as motivation for another hierarchical method proposed by Martinsson and Gillman called the Hierarchical Poincaré-Steklov method.
 
 \subsubsection{The Hierarchical Poincaré-Steklov Method}
+\label{subsub:hps-method}
 
 The work done by Gillman and Martinsson in \cite{martinsson2004fast}, \cite{MARTINSSON2013460}, and \cite{gillman2014direct} (with a practical tutorial found in \cite{martinsson2015hierarchical}) culminate in what they call the Hierarchical Poincaré-Steklov (HPS) method. It is a direct solver for elliptic PDEs that is based on a binary tree of rectangular patches where the solution operator to $\textbf{A}$ is built by recursively merging child patches. Like direct methods, the HPS method involves a factorization step and a solve step. The chief advantage of the HPS method over other direct methods is that it does not require the explicit formulation and storage of $\textbf{A}$.
 

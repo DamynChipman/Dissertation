@@ -69,11 +69,30 @@ where $\textbf{b}$ contains any updates necessary for any type of boundary condi
 
 \subsection{Finite Volume}
 
-In a finite volume scheme, the domain is broken up into cells, which can be structured or unstructured polygons (2D) or polyhedrons (3D). The function to approximate is solved for in terms of a cell average. Finite volume schemes are often used to solve equations modeling conservation laws, where the cell quantity is conserved in time through balancing fluxes (what comes in and out of the cell boundaries) and the cell source (what the cell is generating or destroying). In a finite volume scheme, the cell average is updated according to the integral formulation of the conservation law as
+In a finite volume scheme, the domain is broken up into cells, which can be structured or unstructured polygons (2D) or polyhedrons (3D). The function to approximate is solved for in terms of a cell average. Finite volume schemes are often used to solve equations modeling conservation laws, where the cell quantity is conserved in time through balancing fluxes (what comes in and out of the cell boundaries) and the cell source (what the cell is generating or destroying).
+
+Elliptic systems like the Poisson equation can be solved via the finite volume method by considering that the flux across a cell domain can be related to the quantity being advected (Fick's Law). Start with the general, linear conservation law,
 \begin{align}
-    \frac{\partial}{\partial t} \int_{\Omega_i} \textbf{q} d\Omega_i + \int_{\Gamma_i} \textbf{F}(\textbf{q}) \cdot \hat{n}_i d\Gamma_i + \int_{\Omega_i} \textbf{s} d\Omega_i = 0,
+    \frac{\partial q(x,y,t)}{\partial t} + \nabla \cdot \textbf{F}(x,y,t) = s(x,y,t),
 \end{align}
-where $\Omega_i$ and $\Gamma_i$ are the cell domains and boundaries, respectively, $\textbf{q}$ is a vector of quantities in each cell, $\textbf{F}$ is a flux function, and $\textbf{s}$ is the cell's source term. In the second plot of Figure \ref{fig:discretization_methods}, the blue dashed lines are the cell boundaries, and the red points are the cell centers. For up to second order schemes, the cell average is collocated at the center of the cell; this changes for higher order schemes.
+and let the flux $\textbf{F}(x,y,t)$ be related to gradient of the quantity: $\textbf{F} = \beta \nabla q$. Plugging this into the conservation equation above yields
+\begin{align}
+    \frac{\partial q(x,y,t)}{\partial t} + \nabla \cdot \left( \beta(x,y) \nabla q(x,y,t) \right) = s(x,y,t).
+\end{align}
+For the finite volume method, we integrate over the cell domain $\Omega_i$
+\begin{align}
+    \frac{\partial}{\partial t} \int_{\Omega_i} q(x,y,t) d\Omega_i + \int_{\Omega_i} \nabla \cdot \left( \beta(x,y) \nabla q(x,y,t) \right) d\Omega_i = \int_{\Omega_i} s(x,y,t) d\Omega_i
+\end{align}
+and use the divergence theorem to relate the volume integral of the flux to the surface integral of the surface:
+\begin{align}
+    \frac{\partial}{\partial t} \int_{\Omega_i} q(x,y,t) d\Omega_i + \int_{\Gamma_i} \beta(x,y) \nabla q(x,y,t) d\Gamma_i = \int_{\Omega_i} s(x,y,t) d\Omega_i.
+\end{align}
+Now, if we only consider the steady-state case ($\frac{\partial q}{\partial t} = 0$), then we get
+\begin{align}
+    \int_{\Gamma_i} \beta(x,y) \nabla q(x,y) d\Gamma_i = \int_{\Omega_i} s(x,y) d\Omega_i.
+\end{align}
+
+\damyn{[Finish this section; reference figure; point to finite difference stencil similarities.]}
 
 \subsection{Finite Element}
 
