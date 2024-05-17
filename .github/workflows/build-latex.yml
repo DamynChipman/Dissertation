@@ -20,10 +20,10 @@ jobs:
       - name: Build-Latex
         uses: dante-ev/latex-action@2021-A
         with:
-          root_file: src/BSUmain.tex
-          compiler: pdflatex
-          args: -synctex=1 -interaction=nonstopmode -file-line-error -recorder ./src/BSUmain.tex
+          root_file: BSUmain.tex
           working_directory: src/
+          compiler: pdflatex
+          args: -synctex=1 -interaction=nonstopmode -file-line-error -recorder
       - name: DEBUG2
         run: pwd; ls -la
       - name: Upload Document
