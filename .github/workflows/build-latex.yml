@@ -16,8 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: DEBUG1
-        run: pwd
-        run: ls -la
+        run: pwd; ls -la
       - name: Build-Latex
         uses: dante-ev/latex-action@2021-A
         with:
@@ -26,8 +25,7 @@ jobs:
           args: -synctex=1 -interaction=nonstopmode -file-line-error -recorder ./src/BSUmain.tex
           working_directory: src/
       - name: DEBUG2
-        run: pwd
-        run: ls -la
+        run: pwd; ls -la
       - name: Upload Document
         uses: actions/upload-artifact@v4.3.3
         with:
