@@ -24,6 +24,7 @@ jobs:
           working_directory: src/
           compiler: pdflatex
           args: -synctex=1 -interaction=nonstopmode -file-line-error -recorder
+          extra_system_packages: texlive-science
       - name: DEBUG2
         run: pwd; ls -la
       - name: Upload Document
