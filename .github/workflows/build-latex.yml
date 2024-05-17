@@ -29,10 +29,10 @@ jobs:
         uses: dante-ev/latex-action@2021-A
         with:
           root_file: BSUmain.tex
-          working_directory: output
+          working_directory: src/output
       - name: Upload Document
         uses: actions/upload-artifact@v4.3.3
         with:
           name: BSUmain.pdf
-          path: ci-output/BSUmain.pdf
+          path: src/output/BSUmain.pdf
           if-no-files-found: error
