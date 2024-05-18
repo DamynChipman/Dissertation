@@ -11,25 +11,25 @@ on:
     branches: [ "develop" ]
 jobs:
   build-latex:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: DEBUG1
-        run: pwd; ls -la
-      - name: Build-Latex
-        uses: dante-ev/latex-action@2021-A
+      - name: ConorMacBride/install-package@latest
         with:
-          root_file: BSUmain.tex
-          working_directory: src/
-          compiler: pdflatex
-          args: -synctex=1 -interaction=nonstopmode -file-line-error -recorder
-          extra_system_packages: texlive-science
+          brew-cask: mactex
+      - name: Checkout
+        uses: actions/checkout@latest
+      - name: DEBUG1
+        run: which pdflatex; pwd
+      - name: Build-Latex
+        run: |
+          cd ./src
+          mkdir ci-output
+          pdflatex  -synctex=1 -interaction=nonstopmode -file-line-error -recorder -output-directory=ci-output BSUmain.tex
       - name: DEBUG2
-        run: pwd; ls -la
+        run: pwd
       - name: Upload Document
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@latest
         with:
           name: BSUmain.pdf
-          path: BSUmain.pdf
+          path: ./src/ci-output/BSUmain.pdf
           if-no-files-found: error
