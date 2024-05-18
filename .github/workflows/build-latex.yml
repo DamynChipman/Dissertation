@@ -14,11 +14,11 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Install Packages
-        uses: ConorMacBride/install-package@latest
+        uses: ConorMacBride/install-package@v1.1.0
         with:
           brew-cask: mactex
       - name: Checkout
-        uses: actions/checkout@latest
+        uses: actions/checkout@v4.1.5
       - name: DEBUG1
         run: which pdflatex; pwd
       - name: Build-Latex
@@ -29,7 +29,7 @@ jobs:
       - name: DEBUG2
         run: pwd
       - name: Upload Document
-        uses: actions/upload-artifact@latest
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: BSUmain.pdf
           path: ./src/ci-output/BSUmain.pdf
