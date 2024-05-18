@@ -13,7 +13,8 @@ jobs:
   build-latex:
     runs-on: macos-latest
     steps:
-      - name: ConorMacBride/install-package@latest
+      - name: Install Packages
+        uses: ConorMacBride/install-package@latest
         with:
           brew-cask: mactex
       - name: Checkout
