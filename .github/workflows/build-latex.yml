@@ -4,7 +4,7 @@ name: Build-LaTeX
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Triggers the workflow on push or pull request events but only for the "develop" branch
   push:
     branches: [ "develop" ]
   pull_request:
@@ -24,13 +24,13 @@ jobs:
       - name: Build-Latex
         run: |
           cd ./src
-          mkdir ci-output
-          pdflatex  -synctex=1 -interaction=nonstopmode -file-line-error -recorder -output-directory=ci-output BSUmain.tex
+          make
+          make
       - name: DEBUG2
         run: pwd
       - name: Upload Document
         uses: actions/upload-artifact@v4.3.3
         with:
           name: BSUmain.pdf
-          path: ./src/ci-output/BSUmain.pdf
+          path: ./src/output/BSUmain.pdf
           if-no-files-found: error
