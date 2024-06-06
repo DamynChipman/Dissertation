@@ -1,8 +1,21 @@
 \section{Components of the HPS algorithm : Merging, Splitting and Leaf Computations}
 \label{sec:quadtree}
-The HPS method applied to \refeq{eq:elliptic_pde} includes a factorization stage and a solve stage. For problems in which for $f(x,y)$ is non-zero, an additional ``upwards'' stage is required for a particular right hand side.  In our algorithm, the build and upwards stages are a successive application of a 4-to-1 merge algorithm while the solve stage is a an application of a 1-to-4 split algorithm.  In this section, we describe these merging and splitting operations.
 
-\ignore{We begin by detailing the computation required on any leaf level patches. We then outline the algorithms for the merging and splitting of families of patches. Next, we demonstrate the HPS method with the build, upwards, and solve stages. }
+The \gls{qahps} method applied to \refeq{eq:elliptic-pde} is broken into a factorization stage (called the build stage) and an application stage (called the solve stage). For problems in which $f(x,y)$ is non-zero, an additional ``upwards'' stage is required which handles the inhomogeneous correction.
+
+The goal of the \gls{qahps} method is to build up a {\em solution operator set} defined as
+\begin{align}
+    \mathcal{S} = \{(\textbf{S}^{\tau}, \textbf{w}^{\tau}) : \ \forall\ \tau \in \mathcal{Q}_P\}
+    \label{eq:solution-operator-set}
+\end{align}
+where \Stau and \wtau are the solution operator and the inhomogeneous correction, respectively, which can then be applied to supplied Dirichlet data \gtau such that
+\begin{align}
+    \textbf{u}^{\tau} = \textbf{S}^{\tau} \textbf{g}^{\tau} + \textbf{w}^{\tau},\ \forall\ \tau \in \mathcal{Q}_P.
+    \label{eq:u-Sg-w}
+\end{align}
+Building up the solution operator set is done by successively merging child-level \gls{d2n} operators \Ttau through the computation of a Schur complement.
+
+Each stage of the \gls{qahps} method has a leaf-level computation associated with it, as well as a 4-to-1 merge algorithm (for the build and upwards stages) or a 1-to-4 split algorithm (for the solve stage). The follows sections detail each of these in turn.
 
 \subsection{Leaf Level Computations}
 \label{sub:leaf_level_computations}

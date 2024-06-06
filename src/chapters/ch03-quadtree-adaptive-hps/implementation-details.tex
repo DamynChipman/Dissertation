@@ -49,32 +49,32 @@ where $M$ is the size of a leaf patch boundary, and $\textbf{T}_{w,n}^{'}$ is $\
 
 As a software library, \pforest provides a quadtree data structure and functions to construct, store, and iterate over leaf-level quadrants in the quadtree.  However, the quadtree-adaptive HPS method requires storage for all nodes in the quadtree; this includes children and parent nodes, not just leaf nodes. This is to store the set of solution operators that act as the matrix factorization of the system matrix. Thus, we require a new data structure that allows for data storage for all nodes in a quadtree. One approach that will later prove to be advantageous for parallel applications is a {\em path-indexed quadtree} \citep{woodward1982explicit,samet1984quadtree}. The path of a node is the unique series of directions required to traverse from the root of the tree to the node. The unique path is encoded as a string containing the sequence of nodes visited.  \reffig{fig:quadtree_indexing} illustrates the path and this unique encoding for a level 3 node.
 
-\begin{figure}
-\centering
-\begin{tabular}{c c}
-\smallskip
-    \begin{subfigure}[t]{0.8\textwidth}
-        \centering
-        \includegraphics[width=\textwidth, clip=true, trim={0 150 0 150}]{figures/leaf_indexing_tree.pdf}
-        \caption{Leaf-level indexing of quadtree nodes}
-    \end{subfigure}
-    \\
-    \begin{subfigure}[t]{0.8\textwidth}
-        \centering
-        \includegraphics[width=\textwidth, clip=true, trim={0 140 0 150}]{figures/global_indexing_tree.pdf}
-        \caption{Path indexing of quadtree nodes}
-    \end{subfigure}
-\end{tabular}\\
-\caption{Leaf-indexed vs. path-indexed quadtrees. In (a), only the leaves of a quadtree are indexed and stored. In (b), all nodes of the quadtree are indexed and stored according to their unique path.}
-\label{fig:quadtree_indexing}
-\end{figure}
+% \begin{figure}
+% \centering
+% \begin{tabular}{c c}
+% \smallskip
+%     \begin{subfigure}[t]{0.8\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth, clip=true, trim={0 150 0 150}]{figures/leaf_indexing_tree.pdf}
+%         \caption{Leaf-level indexing of quadtree nodes}
+%     \end{subfigure}
+%     \\
+%     \begin{subfigure}[t]{0.8\textwidth}
+%         \centering
+%         \includegraphics[width=\textwidth, clip=true, trim={0 140 0 150}]{figures/global_indexing_tree.pdf}
+%         \caption{Path indexing of quadtree nodes}
+%     \end{subfigure}
+% \end{tabular}\\
+% \caption{Leaf-indexed vs. path-indexed quadtrees. In (a), only the leaves of a quadtree are indexed and stored. In (b), all nodes of the quadtree are indexed and stored according to their unique path.}
+% \label{fig:quadtree_indexing}
+% \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.4\textwidth]{figures/adaptive_mesh_indexing.pdf}
-\caption{A logically square domain is recursively broken into 4 children domains. This mesh represents refinement criteria that refines the center of the domain. The leaf level nodes are indexed according to a leaf-indexed quadtree and follow a space filling curve.}
-\label{fig:adaptive_mesh}
-\end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.4\textwidth]{figures/adaptive_mesh_indexing.pdf}
+% \caption{A logically square domain is recursively broken into 4 children domains. This mesh represents refinement criteria that refines the center of the domain. The leaf level nodes are indexed according to a leaf-indexed quadtree and follow a space filling curve.}
+% \label{fig:adaptive_mesh}
+% \end{figure}
 
 \ignore{As shown in \reffig{fig:quadtree_indexing}, each node in a family can be indexed $0$ to $3$. The highlighted node in \reffig{fig:quadtree_indexing} has a path of $0212$ which corresponds to the steps taken from the root to arrive at that node.}
 
