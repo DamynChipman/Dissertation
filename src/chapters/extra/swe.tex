@@ -27,7 +27,7 @@ In the classical derivation of the shallow water equations, or the Saint-Venant 
 \end{align}
 is a parameter that describes the ``shallowness" of the fluid. For a shallow water regime, this would imply that $\mu \ll 1$.
 
-In order to account for dispersive effects and generate a higher order system, Boussinesq in 1872 \cite{boussinesq1872theorie} also used perturbation theory, but included terms up to $\mathcal{O}(\mu^2)$. An additional contribution to this system by Peregrine \cite{peregrine1967long} considers variable depth (bathymetry). This leads to the following system expressed in non-dimensional form
+In order to account for dispersive effects and generate a higher order system, Boussinesq in 1872 \citep{boussinesq1872theorie} also used perturbation theory, but included terms up to $\mathcal{O}(\mu^2)$. An additional contribution to this system by Peregrine \citep{peregrine1967long} considers variable depth (bathymetry). This leads to the following system expressed in non-dimensional form
 \begin{align}
     \begin{cases}
         \frac{\partial \eta}{\partial t} + \nabla \cdot (h \textbf{u}) = 0 \\
@@ -40,14 +40,14 @@ where $\mathcal{D}$ accounts for nonhydrostatic and dispersive effects, and is a
 \mathcal{D} = \frac{h}{2} \nabla \Big( \nabla \cdot \big( h \frac{\partial \textbf{u}}{\partial t} \big) \Big) - \frac{h^2}{6} \nabla^2 \Big( \frac{\partial \textbf{u}}{\partial t} \Big).
 \end{align}
 
-From this point, a group from France comprised of Lannes, Bonneton, Marche, Chazel, and Tissier develop addition theory and classes of nonlinear shallow water equation models in \cite{bonneton2011splitting}, \cite{lannes2009derivation}, and \cite{lannes2015new}. They stem from what are called the Serre-Green-Naghdi equations and they derive a modified Serre-Green-Nagdhi model that is more stable, dimensionally decoupled, and time-independent. This model is given below:
+From this point, a group from France comprised of Lannes, Bonneton, Marche, Chazel, and Tissier develop addition theory and classes of nonlinear shallow water equation models in \citep{bonneton2011splitting}, \citep{lannes2009derivation}, and \citep{lannes2015new}. They stem from what are called the Serre-Green-Naghdi equations and they derive a modified Serre-Green-Nagdhi model that is more stable, dimensionally decoupled, and time-independent. This model is given below:
 %
 % % , and we will follow some of their derivations here. The derivations start with ``Boussinesq-type equations" (Lannes, et al.) and are cast into the Serre-Green-Naghdi equations. Then, they are improved upon twice, once with added frequency dispersion stability and further into a class of equations that are easier to solve numerically due to a time and state independent, diagonalized operator.
 %
 % \subsubsection{From Boussinesq to Serre-Green-Naghdi}
 % \label{sub:b2sgn}
 %
-% In \cite{lannes2009derivation}, Lannes et al. start with the Boussinesq formulation in (\ref{boussinesq_model}) and describe various other formulations that have been analyzed for this class of equations. This leads to the Serre-Green-Nagdhi equations, which arise from a higher order ($\mathcal{O}(\mu^2)$) perturbation analysis than performed in the derivation of the classical shallow water equations. The Serre-Green-Naghdi equations as derived in \cite{lannes2009derivation} are given in a cleaner form in \cite{bonneton2011splitting} as the following:
+% In \citep{lannes2009derivation}, Lannes et al. start with the Boussinesq formulation in (\ref{boussinesq_model}) and describe various other formulations that have been analyzed for this class of equations. This leads to the Serre-Green-Nagdhi equations, which arise from a higher order ($\mathcal{O}(\mu^2)$) perturbation analysis than performed in the derivation of the classical shallow water equations. The Serre-Green-Naghdi equations as derived in \citep{lannes2009derivation} are given in a cleaner form in \citep{bonneton2011splitting} as the following:
 % \begin{align}
 %     \begin{cases}
 %         \frac{\partial \eta}{\partial t} + \nabla \cdot (h \textbf{u}) = 0 \\
@@ -66,7 +66,7 @@ From this point, a group from France comprised of Lannes, Bonneton, Marche, Chaz
 % \subsubsection{From Serre-Green-Naghdi to Modified Serre-Green-Nagdhi}
 % \label{sub:sgn2msgn}
 %
-% Following this, in \cite{bonneton2011splitting}, Bonneton et al. recast this system into a more numerically stable form for frequency dispersion and use a splitting approach to split the numerical solution into a hyperbolic-like problem and an elliptic-like problem. The hyperbolic part (which describe the wave properties) can then be solved via high-order finite volume methods, and the elliptic part (which describe the dispersive properties) can be solved with a finite difference approach.
+% Following this, in \citep{bonneton2011splitting}, Bonneton et al. recast this system into a more numerically stable form for frequency dispersion and use a splitting approach to split the numerical solution into a hyperbolic-like problem and an elliptic-like problem. The hyperbolic part (which describe the wave properties) can then be solved via high-order finite volume methods, and the elliptic part (which describe the dispersive properties) can be solved with a finite difference approach.
 %
 % In order to perform this splitting method, Bonneton et al. do the following: 1) Add other order $\mathcal{O}(\mu^2)$ terms to the momentum equation with a tuning parameter $\alpha$ to improve the frequency dispersion. Their logic in doing so is because the scheme is already precise up to terms of order $\mathcal{O}(\mu^2)$, ``this manipulation does not affect the precision of the model" (Bonneton et al.). And 2) reformulate $\eta$ and $\textbf{u}$ into $h$ and $h \textbf{u}$ in such a way that allows them to factor out terms that reduce the 3rd order derivatives into 2nd order. This makes the scheme less numerically stiff.
 %
@@ -90,7 +90,7 @@ From this point, a group from France comprised of Lannes, Bonneton, Marche, Chaz
 %
 % Upon observation, we notice that there are new terms compared to (\ref{sgn}) with the parameter $\alpha$ which acts as a tuning parameter for the frequency dispersion and is choosen to enable stability (more on this in the next section). Additionally, we notice that this model effectively decouples the wave propagation (the first three terms in the momentum equation) and the dispersion effects (the last two terms). This split model is ideal for coupling hyperbolic and elliptic solvers.
 %
-% It is these equations that Popinet uses in \cite{popinet2015quadtree} to develop a quadtree-adaptive multigrid solver to solve the SGN equations. In their approach, they cast (\ref{msgn}) into a system of conservation laws (hyperbolic system), where the dispersion terms appear in the source terms. The dispersive source terms are solved for by solving an elliptic-like equation that involve inverting the operator $\textbf{I} + \alpha h \mathcal{T} \frac{1}{h})$. Their approach is to use a multigrid method to solve for the dispersive terms. We will expand on this elliptic solve in the later sections.
+% It is these equations that Popinet uses in \citep{popinet2015quadtree} to develop a quadtree-adaptive multigrid solver to solve the SGN equations. In their approach, they cast (\ref{msgn}) into a system of conservation laws (hyperbolic system), where the dispersion terms appear in the source terms. The dispersive source terms are solved for by solving an elliptic-like equation that involve inverting the operator $\textbf{I} + \alpha h \mathcal{T} \frac{1}{h})$. Their approach is to use a multigrid method to solve for the dispersive terms. We will expand on this elliptic solve in the later sections.
 %
 % \subsubsection{From Modified Serre-Green-Nagdhi to Constant-Diagonal Serre-Green-Nagdhi}
 %
@@ -102,7 +102,7 @@ From this point, a group from France comprised of Lannes, Bonneton, Marche, Chaz
 %     \mathcal{T}_{21} & \mathcal{T}_{22} \\
 % \end{bmatrix}
 % \end{align}
-% where $\mathcal{T}_{ij}$ are second order scalar differential operators. In order to solve for the dispersive terms in the models given, one needs to invert this operator, and the fact that $\textbf{T}$ has nonzero off-diagonals makes inverting this operator difficult; it couples together the disersive terms in both the x- and y-directions. Furthermore, each scalar operator $\mathcal{T}_{ij}$ is state dependent. This means that $\textbf{T}$ changes each time step in the hyperbolic system. Thus, in \cite{lannes2015new} Lannes et al. recast the modified Serre-Green-Nagdhi model into a constant-diagonal Serre-Green-Nagdhi model which eliminates the off-diagonal entries in $\textbf{T}$ and shifts the state dependency to a term outside the operator inversion.
+% where $\mathcal{T}_{ij}$ are second order scalar differential operators. In order to solve for the dispersive terms in the models given, one needs to invert this operator, and the fact that $\textbf{T}$ has nonzero off-diagonals makes inverting this operator difficult; it couples together the disersive terms in both the x- and y-directions. Furthermore, each scalar operator $\mathcal{T}_{ij}$ is state dependent. This means that $\textbf{T}$ changes each time step in the hyperbolic system. Thus, in \citep{lannes2015new} Lannes et al. recast the modified Serre-Green-Nagdhi model into a constant-diagonal Serre-Green-Nagdhi model which eliminates the off-diagonal entries in $\textbf{T}$ and shifts the state dependency to a term outside the operator inversion.
 %
 % Lannes et al. do this in two steps. First, working in non-dimensional variables, they cast the momemtum equation from (\ref{msgn})
 %
@@ -160,7 +160,7 @@ From this point, a group from France comprised of Lannes, Bonneton, Marche, Chaz
 %
 % This final expression gives the Serre-Green-Naghdi model in a form that decouples the x- and y-component, is time and state independent, is numerically stable, and is asymptotically accurate for order $\mathcal{O}(\mu^2)$ dispersion terms. A quick observation from (\ref{cdsgn}): if we neglect any order $\mathcal{O}(\mu)$ terms, we arrive at the classic Saint-Venant system of shallow water equations derived in \ref{sec:dswe}.
 %
-% In \cite{lannes2015new} Lannes et al. use von Neumann stability analysis to develop expressions for $\alpha$ for this model and for the classic Serre-Green-Naghdi model. They show that their new model is also stable for certain criteria for $\alpha$, namely $\alpha \ge 1$. For their modeling in \cite{lannes2015new}, they choose $\alpha = 1.159$.
+% In \citep{lannes2015new} Lannes et al. use von Neumann stability analysis to develop expressions for $\alpha$ for this model and for the classic Serre-Green-Naghdi model. They show that their new model is also stable for certain criteria for $\alpha$, namely $\alpha \ge 1$. For their modeling in \citep{lannes2015new}, they choose $\alpha = 1.159$.
 %
 % As a summary, we list all the parameters introduced in this derivation below:
 %
@@ -178,7 +178,7 @@ From this point, a group from France comprised of Lannes, Bonneton, Marche, Chaz
 % \subsection{Towards Solving the Serre-Green-Nagdhi Model}
 % \label{sec:tstsgnm}
 %
-% As a final step in this derivation, we motivate the solution methodology presented in the next chapter by casting the constant-diagonal SGN model into it's dimensional version and show how to split the problem into a hyperbolic problem and an elliptic one. This will put the model into a form similar to the form used by Popinet in \cite{popinet2015quadtree}, but with a slightly modified dispersion term to account for the adjustment from the modified SGN model to the constant-diagonal SGN model.
+% As a final step in this derivation, we motivate the solution methodology presented in the next chapter by casting the constant-diagonal SGN model into it's dimensional version and show how to split the problem into a hyperbolic problem and an elliptic one. This will put the model into a form similar to the form used by Popinet in \citep{popinet2015quadtree}, but with a slightly modified dispersion term to account for the adjustment from the modified SGN model to the constant-diagonal SGN model.
 %
 % The constant-diagonal SGN model is given below in it's dimensional version
 

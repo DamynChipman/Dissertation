@@ -9,7 +9,7 @@ The incompressible Navier-Stokes equations is a nonlinear PDE that arises from c
 \begin{align}
     \frac{\partial \textbf{u}}{\partial t} + \textbf{u} \cdot \nabla \textbf{u} &= -\frac{1}{\rho} \nabla P + \nu \nabla^2 \textbf{u}.
 \end{align}
-In \cite{chorin1967numerical}, Chorin first computes an intermediate velocity $\textbf{u}^*$ by time stepping and ignoring the pressure term
+In \citep{chorin1967numerical}, Chorin first computes an intermediate velocity $\textbf{u}^*$ by time stepping and ignoring the pressure term
 \begin{align}
     \frac{\textbf{u}^* - \textbf{u}^n}{\Delta t} &= -\textbf{u}^n \cdot \nabla \textbf{u}^n + \nu \nabla^2 \textbf{u}^n
 \end{align}
@@ -35,7 +35,7 @@ This projection method requires an elliptic solve at every time step to solve fo
 
 The shallow water equations (SWE) form a model for free surface flow derived from potential theory. The key assumption in the SWEs is that the horizontal scale is much larger than the vertical scale. Because a ``shallow limit" is assumed, the velocity field in the vertical direction is a depth-averaged velocity. These types of equations are used to model tsunami waves and debris flow, among other things.
 
-Extensions to this model done by Bonneton et al. in \cite{bonneton2011splitting}, \cite{lannes2009derivation}, and \cite{lannes2015new} introduce a dispersive term correction in the form of a source term, leading to
+Extensions to this model done by Bonneton et al. in \citep{bonneton2011splitting}, \citep{lannes2009derivation}, and \citep{lannes2015new} introduce a dispersive term correction in the form of a source term, leading to
 \begin{align}
     \frac{\partial \textbf{q}}{\partial t} + \nabla \cdot \textbf{F}(\textbf{q}) = \textbf{b} + \textbf{s}
 \end{align}
@@ -72,4 +72,4 @@ In order to solve for the dispersive source term, one must solve the following e
 \begin{align}
     \big( \textbf{I} + \alpha \textbf{T}_{diag}^b \big) \textbf{d} = \textbf{f}(h, \textbf{u}, b, \eta)
 \end{align}
-where the details of the right-hand side function can be found in \cite{lannes2015new}. The operator $\textbf{T}_{diag}^b$ is an elliptic-like operator that does not change with time. So, for a static mesh, the dispersive operator can be factorized via a direct method and applied at each time step. This reduces the need to solve the elliptic PDE every time step to just an application of the solution operator every time step. If the mesh is adapted, the solution operator would need to be reformed. However, direct methods like the HPS method can allow for a local adjustment to the solution operator, further accelerating the solution.
+where the details of the right-hand side function can be found in \citep{lannes2015new}. The operator $\textbf{T}_{diag}^b$ is an elliptic-like operator that does not change with time. So, for a static mesh, the dispersive operator can be factorized via a direct method and applied at each time step. This reduces the need to solve the elliptic PDE every time step to just an application of the solution operator every time step. If the mesh is adapted, the solution operator would need to be reformed. However, direct methods like the HPS method can allow for a local adjustment to the solution operator, further accelerating the solution.

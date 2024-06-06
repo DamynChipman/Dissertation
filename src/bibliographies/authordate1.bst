@@ -52,9 +52,9 @@
 %  - Author's and editor's names are in roman.
 %
 %  The combination of authordate1.bst and authordate1-4.sty allows citations
-%  of the form \shortcite{bloggs-60} as well as the usual \cite{bloggs-60}.
+%  of the form \shortcite{bloggs-60} as well as the usual \citep{bloggs-60}.
 %  When
-%       ... \cite{bloggs-60} ... \shortcite{bloggs-60} ...
+%       ... \citep{bloggs-60} ... \shortcite{bloggs-60} ...
 %  appears in the input file,
 %       ... (Bloggs, 1960) ... (1960) ...
 %  appears in the final document.
@@ -629,7 +629,7 @@ FUNCTION {format.addr.org}
 
 FUNCTION {format.article.crossref}
 { "{\em In:}"
-  " \cite{" * crossref * "}" *
+  " \citep{" * crossref * "}" *
 }
 
 FUNCTION {format.book.crossref}
@@ -641,12 +641,12 @@ FUNCTION {format.book.crossref}
       " of " *
     }
   if$
-  "\cite{" * crossref * "}" *
+  "\citep{" * crossref * "}" *
 }
 
 FUNCTION {format.incoll.inproc.crossref}
 { "{\em In:}"
-  " \cite{" * crossref * "}" *
+  " \citep{" * crossref * "}" *
 }
 
 FUNCTION {article}

@@ -111,7 +111,7 @@ The idea behind the finite element method is to use basis functions
 \end{align}
 inside each element $\Omega_i$, where $\Omega = \cup_{i = 1}^{N_{\text{elem}}} \Omega_i$. When the same basis functions for the test functions $v$ are also used, this leads to the Galerkin finite element method. Upon substitution of the above into \ref{eq:poisson_weak_form}, and integrating the basis function with either quadrature or with analytical expressions, a linear system is formed for the coefficients $c_k$.
 
-There are several variations of the finite element method. The method explained above forms a global linear system involving all elements. To avoid this, mapping a physical element to some reference element, makes the contributions from a single element only influence itself and its neighbors. This makes the coefficient matrix in the linear system much more sparse and structured, making it easier to solve. Additionally, by not imposing continuity across element boundaries, one arrives at the discontinuous Galerkin method, where the discontinuities are handled through element fluxes. By choosing certain shape or basis functions, one can derive different variations of the finite element method, including the B-spline finite element method \cite{kagan1998new} and the spectral element method \cite{patera1984spectral}.
+There are several variations of the finite element method. The method explained above forms a global linear system involving all elements. To avoid this, mapping a physical element to some reference element, makes the contributions from a single element only influence itself and its neighbors. This makes the coefficient matrix in the linear system much more sparse and structured, making it easier to solve. Additionally, by not imposing continuity across element boundaries, one arrives at the discontinuous Galerkin method, where the discontinuities are handled through element fluxes. By choosing certain shape or basis functions, one can derive different variations of the finite element method, including the B-spline finite element method \citep{kagan1998new} and the spectral element method \citep{patera1984spectral}.
 
 \subsection{Spectral Methods}
 
@@ -123,7 +123,7 @@ where the coefficients are chosen to minimize a norm, such as the $L^2$ norm of 
 \begin{align}
     x_i &= a + \frac{1}{2}(b - a)\Big(1 + \cos \big( \pi (1 - \frac{i}{N + 1}) \big) \Big), i = 0, ..., N + 1.
 \end{align}
-These points are shown on the last plot of Figure \ref{fig:discretization_methods}. With a good basis of grid points, spectral methods can achieve very fast convergence. The linear system formed by this method will be dense as it functions like a high-order interpolation scheme. However, as convergence is much faster than high-order finite difference methods, one can use far fewer points on a grid, so the size of the system is kept small. If one uses Fourier series as the basis functions $\phi$, one can accelerate the solution of the linear system using fast Fourier Transform algorithms. Though, due to the periodic nature of the Fourier series, it is more difficult to implement non-periodic boundary conditions (\cite{leveque2007finite}, \cite{townsend2015automatic}).
+These points are shown on the last plot of Figure \ref{fig:discretization_methods}. With a good basis of grid points, spectral methods can achieve very fast convergence. The linear system formed by this method will be dense as it functions like a high-order interpolation scheme. However, as convergence is much faster than high-order finite difference methods, one can use far fewer points on a grid, so the size of the system is kept small. If one uses Fourier series as the basis functions $\phi$, one can accelerate the solution of the linear system using fast Fourier Transform algorithms. Though, due to the periodic nature of the Fourier series, it is more difficult to implement non-periodic boundary conditions (\citep{leveque2007finite}, \citep{townsend2015automatic}).
 
 % [TODO: Rework this section]
 %
@@ -150,7 +150,7 @@ These points are shown on the last plot of Figure \ref{fig:discretization_method
 % \begin{align}
 %     x_k = \cos \Big( \frac{2k - 1}{2n} \pi \Big), k = 1, ..., n.
 % \end{align}
-% Using these nodes can increase the accurarcy of the method as well as provide a better set of collocation points for interpolation \cite{igel1999wave}.
+% Using these nodes can increase the accurarcy of the method as well as provide a better set of collocation points for interpolation \citep{igel1999wave}.
 
 \subsection{Other Methods and Summary}
 

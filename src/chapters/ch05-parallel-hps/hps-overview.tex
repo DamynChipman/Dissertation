@@ -1,7 +1,7 @@
 \section{Overview of the Quadtree-Adaptive HPS Method}
 \label{sec:overview-of-the-quadtree-adaptive-hps-method}
 
-In this section, we provide an overview of the quadtree-adaptive HPS method that is outlined in more detail in \cite{chipman2024fast}. This is to provide context as well as demonstrate where we can implement distributed memory parallelism.
+In this section, we provide an overview of the quadtree-adaptive HPS method that is outlined in more detail in \citep{chipman2024fast}. This is to provide context as well as demonstrate where we can implement distributed memory parallelism.
 
 \subsection{Problem Statement and Domain Representation}
 \label{sub:problem-statement-and-domain-representation}
@@ -23,7 +23,7 @@ The domain $\Omega$ is partitioned into a composite collection of subdomains $\O
 \end{align}
 where $N_L$ is the number of leaf nodes. A representation of the mesh in \reffig{fig:adaptive_mesh} as a leaf-indexed quadtree can be found in \reffig{subfig:leaf-indexed-quadtree}. Building up $\mathcal{Q}_L$ is done by refining a logically square domain recursively into children patches according to some initial refinement criteria that is problem dependent or user-supplied.
 
-As detailed in \cite{chipman2024fast}, we also need to create a {\em path-indexed quadtree} that has data storage for all nodes in the quadtree. We define the path-indexed quadtree formally as
+As detailed in \citep{chipman2024fast}, we also need to create a {\em path-indexed quadtree} that has data storage for all nodes in the quadtree. We define the path-indexed quadtree formally as
 \begin{align}
     \mathcal{Q}_P = \{\Omega^{\tau} | \tau = 1, \dots, N_P\},
 \end{align}
@@ -171,7 +171,7 @@ In each of the stages, there are two traversals of the quadtree $\mathcal{Q}_P$:
 
 \subsubsection{The Build Stage}
 
-The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-level patches. As outlined in \cite{chipman2024fast}, this is done by calling a patch solver that employs fast methods to solve \refeq{eq:elliptic-pde}. \refeq{eq:elliptic-pde} is solved with unit potentials placed on each of the cell centers on the boundary of the leaf-level patch to compute the columns of $\textbf{T}^{\tau}$.
+The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-level patches. As outlined in \citep{chipman2024fast}, this is done by calling a patch solver that employs fast methods to solve \refeq{eq:elliptic-pde}. \refeq{eq:elliptic-pde} is solved with unit potentials placed on each of the cell centers on the boundary of the leaf-level patch to compute the columns of $\textbf{T}^{\tau}$.
 
 The family traversal of the build stage is outlined in \refalg{alg:build_merge} and is done in a post-order fashion. The goal of the 4-to-1 merge is to compute the parent-level Dirichlet-to-Neumann matrix and the solution operator from the four children patches. This is done with \refeq{eq:T-merged} and \refeq{eq:S-merged}.
 

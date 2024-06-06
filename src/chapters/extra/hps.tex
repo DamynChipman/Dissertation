@@ -1,6 +1,6 @@
 \section{The Hierarchical Poincaré-Steklov Method}
 
-Initial work towards a fast, direct solver for elliptic PDEs is somewhat inspired by advances in fast algorithms for boundary integral methods. These kind of algorithms include fast multipole methods, panel clustering, wavelets, etc. \cite{martinsson2004fast}. Motivation for a fast, direct solver (vs. an iterative one) stems from wanting to improve upon the disadvantages of iterative solvers, namely from \cite{martinsson2004fast}:
+Initial work towards a fast, direct solver for elliptic PDEs is somewhat inspired by advances in fast algorithms for boundary integral methods. These kind of algorithms include fast multipole methods, panel clustering, wavelets, etc. \citep{martinsson2004fast}. Motivation for a fast, direct solver (vs. an iterative one) stems from wanting to improve upon the disadvantages of iterative solvers, namely from \citep{martinsson2004fast}:
 
 \begin{adjustwidth}{0.25cm}{}
     1) The number of iterations for convergence is sensitive to the spectral properties of the matrix $\textbf{A}$. In many cases, $\textbf{A}$ can be ill-conditioned and convergence is very slow.
@@ -12,11 +12,11 @@ Initial work towards a fast, direct solver for elliptic PDEs is somewhat inspire
     \noindent 4) Most direct methods can take advantage of fast and efficient algorithms for matrix factorization such as the singular value decomposition, LU-decomposition, QR-decomposition, etc.
 \end{adjustwidth}
 
-The work done by Martinsson and Gillman in \cite{martinsson2004fast}, \cite{MARTINSSON2013460}, and \cite{gillman2014direct} (with a great tutorial found in \cite{martinsson2015hierarchical}) culminate in what they call the Hierarchical Poincaré-Steklov (HPS) method. It is a direct solver for elliptic PDEs that is based on a hierarchical binary tree of rectangular patches where the solution operator to $\textbf{A}$ is built by recursively merging child patches.
+The work done by Martinsson and Gillman in \citep{martinsson2004fast}, \citep{MARTINSSON2013460}, and \citep{gillman2014direct} (with a great tutorial found in \citep{martinsson2015hierarchical}) culminate in what they call the Hierarchical Poincaré-Steklov (HPS) method. It is a direct solver for elliptic PDEs that is based on a hierarchical binary tree of rectangular patches where the solution operator to $\textbf{A}$ is built by recursively merging child patches.
 
 \subsection{Overview of the Hierarchical Poincaré-Steklov Method}
 
-We'll provide a high level overview of the HPS method, following steps from \cite{gillman2014direct} and \cite{martinsson2015hierarchical}. The method can be broken into a build stage (which involves leaf operations and a merge step) and a solve stage.
+We'll provide a high level overview of the HPS method, following steps from \citep{gillman2014direct} and \citep{martinsson2015hierarchical}. The method can be broken into a build stage (which involves leaf operations and a merge step) and a solve stage.
 
 \subsubsection{Build Stage: Leaf Level Computations}
 
@@ -42,9 +42,9 @@ and define the vector $\textbf{h}$ to be the Neumann data sampled at the boundar
     \textbf{T} \textbf{g} = \textbf{h}.
 \end{align}
 
-The DtN operator falls under a broader category of operators called Poincaré-Steklov operators, which the interested reader can learn more about in \cite{quarteroni1991theory}.
+The DtN operator falls under a broader category of operators called Poincaré-Steklov operators, which the interested reader can learn more about in \citep{quarteroni1991theory}.
 
-In order to compute leaf level operators as defined above, Martinsson in \cite{martinsson2015hierarchical} and Gillman in \cite{gillman2014direct} both use a spectral decomposition of Chebyshev and Gaussian nodes. They use map between Chebyshev and Gaussian nodes at different points to take advantage of each sets' respective advantages. Spectral differential techniques all Martinsson and Gillman to explicitly define $\textbf{S}$. Additional ways to form $\textbf{S}$ depend on the type of discretization on the leaf level patches. For example, if instead of a tensor product of Chebyshev ndoes, a user discretizes a leaf patch with a finite volume grid, the solution operator would be derived from a stencil matrix as in \cite{leveque2007finite}.
+In order to compute leaf level operators as defined above, Martinsson in \citep{martinsson2015hierarchical} and Gillman in \citep{gillman2014direct} both use a spectral decomposition of Chebyshev and Gaussian nodes. They use map between Chebyshev and Gaussian nodes at different points to take advantage of each sets' respective advantages. Spectral differential techniques all Martinsson and Gillman to explicitly define $\textbf{S}$. Additional ways to form $\textbf{S}$ depend on the type of discretization on the leaf level patches. For example, if instead of a tensor product of Chebyshev ndoes, a user discretizes a leaf patch with a finite volume grid, the solution operator would be derived from a stencil matrix as in \citep{leveque2007finite}.
 
 Another approach to ``building" $\textbf{S}$ is to actually not build $\textbf{S}$, but have a function that applies the operation of the solution operator. In practice, any iterative or direct method to solve an ellipitc BVP would work. The goal is to have a function that takes grid information and the Dirichlet boundary data and outputs the solution data on the interior.
 
@@ -54,7 +54,7 @@ Next, we look at how to compute the DtN operator $\textbf{T}$ on the leaf level.
 
 Once all of the leaf level computations are done, the next step is to merge neighboring patches in an upwards pass of the tree. The merge process can be thought of as an elimination of the nodes on the interface of two patches. This takes the form of a Schur complement for a blocked system comprised of indexed boundary nodes.
 
-We will use the notation from \cite{martinsson2015hierarchical} and \cite{gillman2014direct} to express the merged operators. We define the following index sets:
+We will use the notation from \citep{martinsson2015hierarchical} and \citep{gillman2014direct} to express the merged operators. We define the following index sets:
 \begin{align*}
     \textbf{I}_1 &= \text{Boundary nodes of } \alpha \text{ that are not boundary nodes of } \beta \\
     \textbf{I}_2 &= \text{Boundary nodes of } \beta \text{ that are not boundary nodes of } \alpha \\
@@ -179,12 +179,12 @@ In terms of performance, this is where the HPS method (and direct methods in gen
 
 \subsubsection{A Note on Performance and Accuracy}
 
-Now that we have the details of the HPS method, let's address how well it performs. Following the analysis in \cite{martinsson2015hierarchical} and \cite{gillman2014direct}, they show that the total cost of the build and solve stages is:
+Now that we have the details of the HPS method, let's address how well it performs. Following the analysis in \citep{martinsson2015hierarchical} and \citep{gillman2014direct}, they show that the total cost of the build and solve stages is:
 \begin{align}
     \text{Build Stage }& \approx N^{1.5} \\
     \text{Solve Stage }& \approx N \log N,
 \end{align}
-where $N = $ total number of discretization nodes. Regarding accuracy, both Martinsson and Gillman report that "the merge stage is exact when performed in exact arithmetic. The only approximation involved is the approximation of the solution on a leaf by its interpolating polynomial" (\cite{martinsson2015hierarchical}, \cite{gillman2014direct}). The leaf level computations are only as good as the accuracy of the solution operator. And the solve stage is simply applying the solution operator. So, we expect that the accuracy and convergence of the HPS method is as good as the leaf level solution operator. Further convergence analysis and theory are also in development.
+where $N = $ total number of discretization nodes. Regarding accuracy, both Martinsson and Gillman report that "the merge stage is exact when performed in exact arithmetic. The only approximation involved is the approximation of the solution on a leaf by its interpolating polynomial" (\citep{martinsson2015hierarchical}, \citep{gillman2014direct}). The leaf level computations are only as good as the accuracy of the solution operator. And the solve stage is simply applying the solution operator. So, we expect that the accuracy and convergence of the HPS method is as good as the leaf level solution operator. Further convergence analysis and theory are also in development.
 
 \begin{figure}
     \centering
@@ -193,11 +193,11 @@ where $N = $ total number of discretization nodes. Regarding accuracy, both Mart
     \label{fig:solve}
 \end{figure}
 
-The HPS method, as detailed above, already shows promise and improvements towards fast, direct solvers, with a naive complexity of order $\mathcal{O}(N^{3/2})$. In \cite{gillman2014direct}, Gillman accelerates the work done in \cite{martinsson2015hierarchical} and describes how to achieve asymptotical performance of order $\mathcal{O}(N)$.
+The HPS method, as detailed above, already shows promise and improvements towards fast, direct solvers, with a naive complexity of order $\mathcal{O}(N^{3/2})$. In \citep{gillman2014direct}, Gillman accelerates the work done in \citep{martinsson2015hierarchical} and describes how to achieve asymptotical performance of order $\mathcal{O}(N)$.
 
 \subsection{Accelerating the Hierarchical Poincaré-Steklov Method}
 
-As Gillman notes in \cite{gillman2014direct}, the most expensive part of the HPS algorithm is in the merge operation. At the top level, computing the merged operators involve dense matricies of $\mathcal{O}(N^{1/2}) \times \mathcal{O}(N^{1/2})$ for an overall cost of $\mathcal{O}(N^{3/2})$. It is possible to take advantage of the internal structure of these matricies to accelerate the matrix algebra. Gillman notes that the ``off-diagonal blocks of these matricies are to, high precision, rank deficient" and can be represented in a ``data-sparse" format called hierarchically block seperable (HBS) (\cite{gillman2014direct}). We will follow \cite{gillman2014direct} and \cite{gillman2012direct} to describe what it means to be HBS and how to use this property to apply inverses and operators.
+As Gillman notes in \citep{gillman2014direct}, the most expensive part of the HPS algorithm is in the merge operation. At the top level, computing the merged operators involve dense matricies of $\mathcal{O}(N^{1/2}) \times \mathcal{O}(N^{1/2})$ for an overall cost of $\mathcal{O}(N^{3/2})$. It is possible to take advantage of the internal structure of these matricies to accelerate the matrix algebra. Gillman notes that the ``off-diagonal blocks of these matricies are to, high precision, rank deficient" and can be represented in a ``data-sparse" format called hierarchically block seperable (HBS) (\citep{gillman2014direct}). We will follow \citep{gillman2014direct} and \citep{gillman2012direct} to describe what it means to be HBS and how to use this property to apply inverses and operators.
 
 \subsubsection{Hierarchically Block Seperable Matricies}
 
@@ -243,15 +243,15 @@ Perhaps the most important property of these HBS matricies is that not only is $
 \subsubsection{Inverting and Applying HBS Matricies}
 \label{subsub:applyHBS}
 
-Taking advantage of the properties of HBS matrices, Gillman shows in \cite{gillman2012direct} how to use HBS matricies. She details in \cite{gillman2012direct}: Algorithm 2 how to perform a matrix-vector product with an HBS matrix, in \cite{gillman2012direct}: Algorithm 3 how to invert an HBS matrix, and in \cite{gillman2012direct}: Algorithm 4 how to apply an inverse of an HBS matrix. Gillman also states the complexity of building and applying an HBS inverse to be order $\mathcal{O}(N)$ and provides the theorem therein.
+Taking advantage of the properties of HBS matrices, Gillman shows in \citep{gillman2012direct} how to use HBS matricies. She details in \citep{gillman2012direct}: Algorithm 2 how to perform a matrix-vector product with an HBS matrix, in \citep{gillman2012direct}: Algorithm 3 how to invert an HBS matrix, and in \citep{gillman2012direct}: Algorithm 4 how to apply an inverse of an HBS matrix. Gillman also states the complexity of building and applying an HBS inverse to be order $\mathcal{O}(N)$ and provides the theorem therein.
 
 \subsubsection{Extensions to HBS Matricies}
 
-Due to the low-rank structure of HBS matricies, further optimizations are possible. Xia in \cite{xia2013randomized} extend the topic of randomized matricies to HBS matricies to achieve further speed up and better data storage.
+Due to the low-rank structure of HBS matricies, further optimizations are possible. Xia in \citep{xia2013randomized} extend the topic of randomized matricies to HBS matricies to achieve further speed up and better data storage.
 
 \subsubsection{Using HBS Matricies in the Direct Solver}
 
-To bring the discussion back to the HPS method, we look at how we can use HBS matricies and randomized matrix math to accelerate the HPS direct solver. Xia in \cite{xia2013randomized} applies her randomized sparse solver to various sparse matricies that arise from various applications such as PDE discretizations and graph theory. Gillman in \cite{gillman2014direct} uses HBS matricies to accelerate the HPS method. As we are interested in direct solvers for elliptic PDES, we will follow Gillman's extension of HBS matricies to the HPS method.
+To bring the discussion back to the HPS method, we look at how we can use HBS matricies and randomized matrix math to accelerate the HPS direct solver. Xia in \citep{xia2013randomized} applies her randomized sparse solver to various sparse matricies that arise from various applications such as PDE discretizations and graph theory. Gillman in \citep{gillman2014direct} uses HBS matricies to accelerate the HPS method. As we are interested in direct solvers for elliptic PDES, we will follow Gillman's extension of HBS matricies to the HPS method.
 
 Gillman starts by showing that the merge operations for $\textbf{S}^{\tau}$ and $\textbf{T}^{\tau}$ are formed from HBS matricies. Once this is shown, we can look at the merge operation can be accelerated using HBS operators. The solution operator in \ref{merge_S} is formed by 1) adding HBS matricies $\textbf{T}_{3,3}^{\alpha}$ and $-\textbf{T}_{3,3}^{\beta}$, 2) inverting this result, and 3) applying the HBS inverse to either of the low-rank matricies $\textbf{T}_{3,1}^{\alpha}$ and $\textbf{T}_{3,2}^{\beta}$.
 
@@ -259,7 +259,7 @@ Forming the DtN operator is done in a similar manner: 1) Form the matrix product
 
 Applying the solution operator in the build stage can also take advantage of HBS algorithms, and is simply an HBS matrix-vector product down the tree.
 
-The algorithms mentioned in \ref{subsub:applyHBS} from \cite{gillman2012direct} are the methods that can be used to perform this linear algebra in a fast manner.
+The algorithms mentioned in \ref{subsub:applyHBS} from \citep{gillman2012direct} are the methods that can be used to perform this linear algebra in a fast manner.
 
 Now, in practice, it is more efficient to simply use dense matrix algebra on the lower levels of the tree. At some point however, the matricies become large enough that the use and overhead of the HBS matrix math is smaller than simple dense matrix math, thus achieving speed up compared to an all dense matrix math implementation.
 
@@ -302,14 +302,14 @@ The merge operator then must also compute a merged $\hat{\textbf{w}}$ done with 
     (\textbf{T}_{3,3}^{\alpha} - \textbf{T}_{3,3}^{\beta})^{-1} (\hat{\textbf{w}}_3^{\beta} - \hat{\textbf{w}}_3^{\alpha})
 \end{align}
 
-While these additional computations do not increase the asymptotical performance of the HPS method, it does significantly increase the amount of storage required due to the need to store additional vectors. Gillman and Martinsson detail the non-homogenous HPS method in both their presentations of the HPS method in \cite{gillman2014direct}, \cite{martinsson2015hierarchical}, and \cite{martinsson2019fast}.
+While these additional computations do not increase the asymptotical performance of the HPS method, it does significantly increase the amount of storage required due to the need to store additional vectors. Gillman and Martinsson detail the non-homogenous HPS method in both their presentations of the HPS method in \citep{gillman2014direct}, \citep{martinsson2015hierarchical}, and \citep{martinsson2019fast}.
 
 \subsubsection{The Adaptive Hierarchical Poincaré-Steklov Method}
 
-One of the major advantages to using the HPS method is it's hierarchical discretization. While the original presentation of the HPS method only considers uniform meshes, the HPS method can also be implemented on an adaptive mesh. This type of meshing, and the performance associated with the HPS method, make it of particular interest when solving the Serre-Green-Nagdhi model as most finite volume codes employ dynamic (as in changes with each time step), adaptive meshing. This is the case for ForestClaw, which we will use for the hyperbolic part of the Serre-Green-Nagdhi solver \cite{calhoun2017forestclaw}.
+One of the major advantages to using the HPS method is it's hierarchical discretization. While the original presentation of the HPS method only considers uniform meshes, the HPS method can also be implemented on an adaptive mesh. This type of meshing, and the performance associated with the HPS method, make it of particular interest when solving the Serre-Green-Nagdhi model as most finite volume codes employ dynamic (as in changes with each time step), adaptive meshing. This is the case for ForestClaw, which we will use for the hyperbolic part of the Serre-Green-Nagdhi solver \citep{calhoun2017forestclaw}.
 
-Geldermans et al. in \cite{geldermans2019adaptive} extend the HPS method to work on non-uniform meshes. Their primary modification is in using a different tensor basis that is more efficient and stable in order to provide accurate interpolation between non-uniform mesh boundaries. As the HPS method already allows for a recursive splitting and merging, the main problem to address in an adaptive setting is how to handle coarse-fine boundaries. As Geldermans et al. use a spectral discretization of Chebyshev nodes, they use spectral interpolation methods in order to handle merging of patches that do not lie on the same level. They present an adaptive HPS algorithm for solving elliptic PDEs and show that they can still achieve fast performance and accurate results.
+Geldermans et al. in \citep{geldermans2019adaptive} extend the HPS method to work on non-uniform meshes. Their primary modification is in using a different tensor basis that is more efficient and stable in order to provide accurate interpolation between non-uniform mesh boundaries. As the HPS method already allows for a recursive splitting and merging, the main problem to address in an adaptive setting is how to handle coarse-fine boundaries. As Geldermans et al. use a spectral discretization of Chebyshev nodes, they use spectral interpolation methods in order to handle merging of patches that do not lie on the same level. They present an adaptive HPS algorithm for solving elliptic PDEs and show that they can still achieve fast performance and accurate results.
 
 \subsubsection{The Ultraspherical Spectral Element Method}
 
-The ultraspherical spectral element method (ultraSEM) presented by Fortunato et al. is another highly practical extension of the HPS method. In \cite{fortunato2020ultraspherical}, they apply their ultraspherical spectral element method from \cite{olver2013fast} to the HPS method. Namely, by using spectral discretization on leaf nodes that can also be mapped quadrilaterals and triangles, and using the HPS method for merging and building global operators, they use the HPS method on unstructured meshes. In addition, this demonstrates that the idea of the HPS method of hierarchically merging patches can be applied to any type of solution for BVPs, whether it be a finite difference, finite volume, finite element, spectral element method or others.
+The ultraspherical spectral element method (ultraSEM) presented by Fortunato et al. is another highly practical extension of the HPS method. In \citep{fortunato2020ultraspherical}, they apply their ultraspherical spectral element method from \citep{olver2013fast} to the HPS method. Namely, by using spectral discretization on leaf nodes that can also be mapped quadrilaterals and triangles, and using the HPS method for merging and building global operators, they use the HPS method on unstructured meshes. In addition, this demonstrates that the idea of the HPS method of hierarchically merging patches can be applied to any type of solution for BVPs, whether it be a finite difference, finite volume, finite element, spectral element method or others.

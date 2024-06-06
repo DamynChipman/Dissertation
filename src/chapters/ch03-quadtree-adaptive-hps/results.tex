@@ -3,7 +3,7 @@
 
 To test and verify the implementation of the quadtree-adaptive HPS method, we solve two Poisson equations and one Helmholtz equation. For each, we present error, timing, and memory usage results and discuss the performance of our implemented method.
 
-For all of our examples, we discretize the Laplace operator at the patch level using a second-order, 5-point stencil on a finite volume (cell-centered) mesh. The code, along with numerical experiments below, is stored in the GitHub repository EllipticForest \cite{chipman2023elliptic}. EllipticForest is written primarily in C++, with wrappers to FORTRAN routines to call FISHPACK and LAPACK (\cite{anderson1999lapack}) for any dense linear algebra operations. The mesh and solution are output into an unstructured VTK mesh file \cite{vtkBook} and are visualized with the VisIt software \cite{HPV:VisIt}. All tests were run on a 2021 MacBook Pro with an M1 Pro CPU and 32 GB of RAM.
+For all of our examples, we discretize the Laplace operator at the patch level using a second-order, 5-point stencil on a finite volume (cell-centered) mesh. The code, along with numerical experiments below, is stored in the GitHub repository EllipticForest \citep{chipman2023elliptic}. EllipticForest is written primarily in C++, with wrappers to FORTRAN routines to call FISHPACK and LAPACK (\citep{anderson1999lapack}) for any dense linear algebra operations. The mesh and solution are output into an unstructured VTK mesh file \citep{vtkBook} and are visualized with the VisIt software \citep{HPV:VisIt}. All tests were run on a 2021 MacBook Pro with an M1 Pro CPU and 32 GB of RAM.
 
 \subsection{Poisson Equation 1}
 \label{sub:example_one}
@@ -294,11 +294,11 @@ We now seek to solve the boundary value problem
 \end{align}
 on the square domain $\Omega = [-0.5, 0.5] \times [-0.5, 0.5]$ and subject to Dirichlet boundary conditions which are supplied via the exact solution discussed below.
 
-To provide an analytical solution to compare against, we use a problem provided in \cite{cheng2006adaptive} where they solve Helmholtz's equation on an adaptive mesh. The manufactured solution is
+To provide an analytical solution to compare against, we use a problem provided in \citep{cheng2006adaptive} where they solve Helmholtz's equation on an adaptive mesh. The manufactured solution is
 \begin{align}
     u(\textbf{x}) = \sum_{i=1}^{3} e^{-\alpha |\textbf{x} - \textbf{x}_i|^2}
 \end{align}
-with $\lambda=0.01$, $\alpha=50$, $\textbf{x}_1 = (0.1, 0.1)$, $\textbf{x}_2 = (0, 0)$, and $\textbf{x}_3 = (-0.15, 0.1)$. The right-hand side is computed analytical via the Mathematica software \cite{Mathematica} and is used as the refinement criteria. We set the threshold for refinement to $60$. The solution and right-hand side function for $16 \times 16$ patches are plotted in \reffig{fig:helmholtz_u_plot} and \reffig{fig:helmholtz_f_plot}.
+with $\lambda=0.01$, $\alpha=50$, $\textbf{x}_1 = (0.1, 0.1)$, $\textbf{x}_2 = (0, 0)$, and $\textbf{x}_3 = (-0.15, 0.1)$. The right-hand side is computed analytical via the Mathematica software \citep{Mathematica} and is used as the refinement criteria. We set the threshold for refinement to $60$. The solution and right-hand side function for $16 \times 16$ patches are plotted in \reffig{fig:helmholtz_u_plot} and \reffig{fig:helmholtz_f_plot}.
 
 {\bf Results and Discussion}
 As demonstrated with this example, the implemented HPS solves Helmholtz equations as well with the expected second order accuracy. See \reftab{tab:helmholtz_results} for error and convergence analysis. The adaptive mesh is able to successfully capture the curvature and reduce the work required to solve this equation. \reftab{tab:helmholtz_timing} show timing and memory usage results, which show significant speedup due to good mesh adaptation. We achieve a $17$ times speedup for the build and upwards stage and a $57$ times speedup for the solve stage. Memory is also impressive for this particular problem, with solving the same problem with similar error with $4.6\%$ of the required memory.
@@ -460,7 +460,7 @@ As demonstrated with this example, the implemented HPS solves Helmholtz equation
 
 % \donna{It would be great to have a plot here.  Maybe both uniform and adaptive plots?}
 
-% \ignore{As this is a homogeneous problem, there will be no refinement based on the right-hand side.} This acts as an initial test to make sure that the merging and splitting algorithms detailed above are consistent with the order of the patch solver. Using the FISHPACK90 patch solver, we should expect $2^{nd}$ order convergence \cite{adams2016fishpack90}. \donna{Describe the FV discretization.  Fishpack is just a way to solve the resulting linear algebra problem.}
+% \ignore{As this is a homogeneous problem, there will be no refinement based on the right-hand side.} This acts as an initial test to make sure that the merging and splitting algorithms detailed above are consistent with the order of the patch solver. Using the FISHPACK90 patch solver, we should expect $2^{nd}$ order convergence \citep{adams2016fishpack90}. \donna{Describe the FV discretization.  Fishpack is just a way to solve the resulting linear algebra problem.}
 
 % We solve \ignore{Laplace's equation}  by creating the uniform mesh up to a specified level of refinement $L$. Each patch consists of an $M \times M$ grid of cell-centered points. \donna{Have you described the finite volume discretization?}.  \ignore{The effective resolution $R_{eff}$ is the number of cell-centered points along an entire side of the domain for a uniformly refined mesh.} \ignore{The effective resolution is computed as $R_{eff} = \{\text{Number of patches per side}\} \times \{\text{Number of points per patch}\} = 2^{L+1} \times M$.} We define {\em effective resolution} as $R_{\mbox{eff}}M 2^L$. \donna{Double check this formula.  You probably don't need to spell out in words.}.  For the uniform case, there are several ways to get the same effective resolution. 
 
@@ -713,9 +713,9 @@ As demonstrated with this example, the implemented HPS solves Helmholtz equation
 % \begin{align}
 %     u_{exact}(x,y) = Y_0(\kappa r(x,y))
 % \end{align}
-% where $Y_0$ is the zeroth Bessel function of the second kind, $\kappa$ is related to the wavelength $\lambda = \frac{2 \pi}{\kappa}$, and $r(x,y) = \sqrt{(x - x_0)^2 + (y - y_0)^2}$ is the distance from the singularity of the Bessel function. This represents a vibration problem on the domain and is the same problem used in \cite{gillman2014direct} to test their implementation. We use $x_0 = -2, y_0 = 0$ and vary $\kappa$ (as detailed in \reftab{tab:helmholtz-1}).
+% where $Y_0$ is the zeroth Bessel function of the second kind, $\kappa$ is related to the wavelength $\lambda = \frac{2 \pi}{\kappa}$, and $r(x,y) = \sqrt{(x - x_0)^2 + (y - y_0)^2}$ is the distance from the singularity of the Bessel function. This represents a vibration problem on the domain and is the same problem used in \citep{gillman2014direct} to test their implementation. We use $x_0 = -2, y_0 = 0$ and vary $\kappa$ (as detailed in \reftab{tab:helmholtz-1}).
 
-% A Helmholtz equation with a high wave number suffers from the so-called ``pollution problem''. A high wave number corresponds to a highly oscillatory solution that is difficult to be captured with lower mesh resolutions. To ensure our implementation works for decently large wave numbers, we run a convergence study with varying values of $\kappa$ and check convergence. For more details on the pollution problem, see \cite{peterseim2017eliminating} or \cite{dwarka2021pollution}.
+% A Helmholtz equation with a high wave number suffers from the so-called ``pollution problem''. A high wave number corresponds to a highly oscillatory solution that is difficult to be captured with lower mesh resolutions. To ensure our implementation works for decently large wave numbers, we run a convergence study with varying values of $\kappa$ and check convergence. For more details on the pollution problem, see \citep{peterseim2017eliminating} or \citep{dwarka2021pollution}.
 
 % {\bf Results and Analysis}
 % \reftab{tab:helmholtz-1} contains the convergence study and parameter sweep for $\kappa$. We vary $\kappa$ and vary the level of refinement and patch size to get various effective resolutions. The values of the wave number $\kappa$ correspond to values of the wavelength $\lambda$ that vary across three orders of magnitude.
