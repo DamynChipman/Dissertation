@@ -19,15 +19,11 @@ jobs:
           brew-cask: mactex
       - name: Checkout
         uses: actions/checkout@v4.1.5
-      - name: DEBUG1
-        run: which pdflatex; pwd
       - name: Build-Latex
         run: |
           cd ./src
           make
           make
-      - name: DEBUG2
-        run: pwd
       - name: Upload Document
         uses: actions/upload-artifact@v4.3.3
         with:
