@@ -22,6 +22,7 @@ jobs:
       - name: Build-Latex
         run: |
           cd ./src
+          echo PATH=$PATH:/Library/TeX/texbin
           make
           make
       - name: Upload Document
