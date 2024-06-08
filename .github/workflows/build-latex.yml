@@ -13,24 +13,15 @@ jobs:
   build-latex:
     runs-on: macos-latest
     steps:
-      - name: Install Packages
-        uses: ConorMacBride/install-package@v1.1.0
-        with:
-          brew-cask: mactex-no-gui
-      # - name: Add LaTeX Compilers to PATH
-      #   run: echo PATH=$PATH:/usr/local/texlive/2024/bin/universal-darwin
-      - name: Add LaTeX Compilers to PATH
-        run: eval "$(/usr/libexec/path_helper)"
       - name: Checkout
         uses: actions/checkout@v4.1.5
       - name: Build Latex
-        run: |
-          cd ./src
-          make
-          make
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: src/BSUmain.tex
       - name: Upload Document
         uses: actions/upload-artifact@v4.3.3
         with:
           name: BSUmain.pdf
-          path: ./src/output/BSUmain.pdf
+          path: BSUmain.pdf
           if-no-files-found: error
