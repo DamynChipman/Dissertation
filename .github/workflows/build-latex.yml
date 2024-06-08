@@ -16,14 +16,14 @@ jobs:
       - name: Install Packages
         uses: ConorMacBride/install-package@v1.1.0
         with:
-          brew-cask: mactex
+          brew-cask: mactex-no-gui
+      - name: Find latexmk
+        run: |
+          find / -name latexmk
       - name: Add LaTeX Compilers to PATH
         run: echo PATH=$PATH:/Library/TeX/texbin
       - name: Checkout
         uses: actions/checkout@v4.1.5
-      - name: Find latexmk
-        run: |
-          find / -name latexmk
       - name: Build Latex
         run: |
           cd ./src
