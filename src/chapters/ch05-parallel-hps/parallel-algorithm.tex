@@ -10,6 +10,35 @@ We define and assume the following with regard to using the Message Passing Inte
 \subsection{Quadtree Data Structures}
 \label{sub:quadtree-data-structures}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth, clip=true, trim={0 100 0 100}]{figures/parallel_adaptive_mesh_indexing.pdf}
+    \caption{An example of an adaptive, quadtree mesh that is refined around the center of the domain. The colors denote different ranks and the numbers indicate the leaf-index of the quadrant.}
+    \label{fig:adaptive_mesh}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tabular}{c}
+    \smallskip
+        \begin{subfigure}[t]{0.8\textwidth}
+            \centering
+            \includegraphics[width=\textwidth, clip=true, trim={0 150 0 150}]{figures/parallel_leaf_indexed_tree.pdf}
+            \caption{Leaf-level indexing of quadtree nodes}
+            \label{subfig:leaf-indexed-quadtree}
+        \end{subfigure}
+        \\
+        \begin{subfigure}[t]{0.8\textwidth}
+            \centering
+            \includegraphics[width=\textwidth, clip=true, trim={0 140 0 150}]{figures/parallel_path_indexed_tree.pdf}
+            \caption{Path indexing of quadtree nodes}
+            \label{subfig:path-indexed-quadtree}
+        \end{subfigure}
+    \end{tabular}\\
+    \caption{Leaf-indexed vs. path-indexed quadtrees. Both trees represent the mesh found in \reffig{fig:adaptive_mesh}. The colors denote which rank owns each node. In (a), only the leaves of a quadtree are indexed and stored. In (b), all nodes of the quadtree are indexed and stored according to their unique path. Note that the nodes in (b) that are colored with a gradient (i.e., ``0'', ``01'', ``02'', ``021'') are owned by multiple ranks.}
+    \label{fig:quadtree_indexing}
+\end{figure}
+
 The \pforest\ library provides a leaf-indexed quadtree data structure and functions to construct, store, and iterate over leaf-level nodes (also called quadrants). The \pforest\ quadtree only stores leaf-level quadrants. Quadrants in a \pforest\ quadtree are stored locally to each rank, with minimal redundant metadata stored on each rank to handle the logic for where each quadrant is stored. The quadrants are stored in a rank-local linked list and indexed according to a space-filling curve. Partitioning in \pforest\ results in an equally-divided quadtree where each rank has roughly the same number of quadrants, subject to the integer division of the number of leaf-nodes $N_{L}$ into $N_{R}$.
 
 As outlined in \citep{chipman2024fast}, the HPS method requires storage for all nodes in a quadtree, including leaves and ancestors. This is to store the set of matrices that act as the factorization of the system matrix. We developed a path-indexed quadtree that builds upon the quadtrees provided in \pforest\ and has storage for all nodes in the quadtree. The path-indexed quadtree indexes each node in the tree according to the path of the node, where a path is the unique series of directions required to traverse from the root of the tree to the node in question. Each node can be uniquely indexed according to its path. The path is used as a key in a key-value lookup table (i.e. map) to provide storage for each node in the path-indexed quadtree. \reffig{fig:quadtree_indexing} depicts the leaf-indexed and path-indexed quadtrees, including colors that denote which ranks own each node.

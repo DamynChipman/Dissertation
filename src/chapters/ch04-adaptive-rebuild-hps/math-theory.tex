@@ -1,1 +1,23 @@
 \section{Mathematical Theory for the Adaptive Rebuild}
+
+We wish to solve \refeqn{eq:elliptic-pde} subject to Dirichlet boundary conditions and/or Neumann boundary conditions. As outlined in \refsec{sec:quadtree}, we partition the domain $\Omega$ into a composite collection of subdomains $\Omega_i$ which organized into a leaf-indexed quadtree $\mathcal{Q}_{L}$ and a path-indexed quadtree $\mathcal{Q}_{P}$. We express explicit dependence of $\mathcal{Q}_{P}$ for the set of solution operators $\mathcal{S}$, which is built up using the algorithms outlined in \refchap{chap:qahps}.
+
+Suppose an initial mesh is created, which we denote with $\mathcal{Q}^{k}_{L}$ and $\mathcal{Q}^{k}_{P}$ (the path-indexed quadtree is created from the leaf-indexed quadtree). This implies the solution operator set $\mathcal{S}^{k}$. Recall the refinement criteria
+\begin{align}
+    T_{R} (\textbf{x}) =
+    \begin{cases}
+        1,& \eta(\textbf{x}) > \epsilon_{R} \\
+        0,& \text{otherwise},
+    \end{cases}
+\end{align}
+and the coarsening criteria
+\begin{align}
+    T_{C} (\textbf{x}) =
+    \begin{cases}
+        1,& \eta(\textbf{x}) < \epsilon_{C} \\
+        0,& \text{otherwise},
+    \end{cases}
+\end{align}
+for $\textbf{x} \in \Omega_i$. Now, the mesh is adapted by iterating over all leaf nodes and checking the refinement and coarsening criteria for all subdomains $\Omega_i$ in $\mathcal{Q}_{L}$, resulting in $\mathcal{Q}^{k+1}_{L}$ and $\mathcal{Q}^{k+1}_{P}$. The updated solution operator set $\mathcal{S}^{k+1}$ is amended based on each refinement or coarsening. When refining, $\mathcal{S}^{k}$ is supplemented by adding the newly created leaf-level nodes' operators yielding $\mathcal{S}^{k'}$, then traversing up the levels in the tree to update the direct ancestors of the tagged nodes to produce $\mathcal{S}^{k+1}$. When coarsening, the operators corresponding to the coarsened group of siblings are removed from $\mathcal{S}^{k}$ yielding $\mathcal{S}^{k'}$, then each ancestor is updated to produce $\mathcal{S}^{k+1}$. When updating the ancestors of the tagged nodes, the same 4-to-1 merge algorithm outlined in \refchap{chap:qahps} is used, just on a per-level basis for each direct ancestor.
+
+Any coarse-fine interfaces that are introduced during this mesh adaptation are handled using the same ``coarsen patch'' approach outlined in \refsec{sub:mesh_adaptivity}.
