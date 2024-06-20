@@ -1,15 +1,13 @@
 \section{Introduction}
 
-The major downside of using direct methods such as the \gls{hps} method with adaptive mesh techniques is the need to recompute the factorization when the mesh changes. Due to the expensive computational cost associated with forming the factorization, this step should be performed as little as possible. Precomputing the factorization to apply to multiple right-hand sides is a primary reason for using a direct method over an iterative one for solving a linear system. However, if the application requires recomputing the factorization multiple times, iterative methods quickly become more advantageous to use. A direct method that can efficiently adapt the factorization to accommodate for changes to the system matrix would eliminate some of the downsides of using a direct method for multiple applications.
-
-% The \gls{hps} method builds up a set of solution operators that represent the factorization of the system matrix $\textbf{A}$. Building the factorization set involves starting at the leaf-level to compute local solution operators, then successively merging a small subset of subdomains. 
+The major downside of using direct methods such as the \gls{hps} method with adaptive mesh techniques is the need to recompute the factorization when the mesh changes. Due to the expensive computational cost associated with forming the factorization, this step should be performed as little as possible. Precomputing the factorization to apply to multiple right-hand sides is a primary reason for using a direct method over an iterative one for solving a linear system. However, if the application requires recomputing the factorization multiple times, iterative methods quickly become more advantageous to use. A direct method that can efficiently adapt the factorization to accommodate for changes to the system matrix would eliminate some of the downsides of using a direct method.
 
 Consider the following two features of the \gls{hps} method:
 \begin{enumerate}
     \item{The factorization is represented as a set of solution operators, $\mathcal{S}$.}
     \item{Computing the factorization set $\mathcal{S}$ involves merging local subdomains.}
 \end{enumerate}
-Note that each of the variations of the original formulation of the \gls{hps} method also contain these features. These features suggest that updating the factorization set to account for a change in the system matrix is possible. The change in the system matrix is a result of refining or coarsening the underlying mesh.
+These features suggest that updating the factorization set to account for a change in the system matrix is possible. The change in the system matrix is a result of refining or coarsening the underlying mesh. 
 
 \subsection{Motivating Example}
 

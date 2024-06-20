@@ -4,7 +4,7 @@
 The general problem we wish to solve is the variable coefficient elliptic \gls{pde} that we define as
 \begin{align}
     \label{eq:elliptic-pde}
-    \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right) + \lambda(\textbf{x}) u(\textbf{x}) &= f(\textbf{x}), \quad \textbf{x} \in \Omega \subset \mathcal{R}^2
+    \mathcal{A}[u(\textbf{x})] \equiv \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right) + \lambda(\textbf{x}) u(\textbf{x}) &= f(\textbf{x}), \quad \textbf{x} \in \Omega \subset \mathcal{R}^2
 \end{align}
 subject to either Dirichlet or Neumann boundary conditions:
 \begin{align}
@@ -35,14 +35,14 @@ where $N_L$ is the number of leaf nodes. \ignore{A representation of the mesh in
     \end{cases}
     \quad \textbf{x} \in \Omega_i
 \end{align}
-where $\eta(\textbf{x})$ is a metric used to measure the need for refinement such as error or state variable gradient. $1$ indicates refinement and $0$ indicates no refinement. The user-defined variable $\epsilon_{R}$ is the refinement threshold. While a coarsening criteria $T_{C}$ is also defined similarly to the refinement criteria, it is often not used in the initialization of $\mathcal{Q}_L$.
+where $\eta(\textbf{x})$ is a metric used to measure the need for refinement such as error or state variable gradient. $1$ indicates refinement and $0$ indicates no refinement. The user-defined variable $\epsilon_{R}$ is the refinement threshold. While a coarsening criteria $T_{C}$ is also defined similar to the refinement criteria, it is often not used in the initialization of $\mathcal{Q}_L$.
 
 We also define a {\em path-indexed quadtree} that is formally denoted as
 \begin{align}
     \mathcal{Q}_P = \{\Omega^{\tau} | \tau = 1, \dots, N_P\},
     \label{eq:path-indexed-quadtree}
 \end{align}
-where $\tau$ is a key that indicates the path of a node in $\mathcal{Q}_P$ and $N_P$ is the number of nodes in $\mathcal{Q}_P$. The primary difference between a leaf-indexed quadtree and a path-indexed quadtree is the indexing of nodes; a leaf-indexed quadtree has data storage for only leaf nodes while a path-indexed quadtree has data storage for all nodes in the quadtree (leaf and ancestors). Both types of trees are depicted in \reffig{fig:quadtree-indexing-serial}.
+where $\tau$ is a key that indicates the path of a node in $\mathcal{Q}_P$ and $N_P$ is the number of nodes in $\mathcal{Q}_P$. The primary difference between a leaf-indexed quadtree and a path-indexed quadtree is the indexing of nodes; a leaf-indexed quadtree has data storage for only leaf nodes while a path-indexed quadtree has data storage for all nodes in the quadtree (leaves and ancestors). Both types of trees are depicted in \reffig{fig:quadtree-indexing-serial}.
 
 \begin{figure}
     \centering
