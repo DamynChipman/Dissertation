@@ -1,1 +1,53 @@
-\section{The Adaptive-Rebuild Algorithm}
+\section{The Adaptive Rebuild Algorithm}
+\label{sec:adaptive-rebuild-algorithm}
+
+\subsection{Theory for the Adaptive Rebuild}
+
+We wish to solve \refeqn{eq:elliptic-pde} subject to Dirichlet boundary conditions and/or Neumann boundary conditions. As outlined in \refsec{sec:quadtree}, we partition the domain $\Omega$ into a composite collection of subdomains $\Omega_i$ which is organized into a leaf-indexed quadtree $\mathcal{Q}_{L}$ and a path-indexed quadtree $\mathcal{Q}_{P}$. We express explicit dependence of $\mathcal{Q}_{P}$ for the set of solution operators $\mathcal{S}$, which is built up using the algorithms outlined in \refchap{chap:qahps}.
+
+Suppose an initial mesh is created, which we denote with $\mathcal{Q}^{k}_{L}$ and $\mathcal{Q}^{k}_{P}$ (the path-indexed quadtree is created from the leaf-indexed quadtree). This implies the solution operator set $\mathcal{S}^{k}$. Recall the refinement criteria
+\begin{align}
+    T_{R} (\textbf{x}) =
+    \begin{cases}
+        1,& \eta(\textbf{x}) > \epsilon_{R} \\
+        0,& \text{otherwise},
+    \end{cases}
+\end{align}
+and the coarsening criteria
+\begin{align}
+    T_{C} (\textbf{x}) =
+    \begin{cases}
+        1,& \eta(\textbf{x}) < \epsilon_{C} \\
+        0,& \text{otherwise},
+    \end{cases}
+\end{align}
+for $\textbf{x} \in \Omega_i$. Now, the mesh is adapted by iterating over all leaf nodes and checking the refinement and coarsening criteria for all subdomains $\Omega_i$ in $\mathcal{Q}_{L}$, resulting in $\mathcal{Q}^{k+1}_{L}$ and $\mathcal{Q}^{k+1}_{P}$. The updated solution operator set $\mathcal{S}^{k+1}$ is amended based on each refinement or coarsening. When refining, $\mathcal{S}^{k}$ is supplemented by adding the newly created leaf-level nodes' operators yielding $\mathcal{S}^{k'}$, then traversing up the levels in the tree to update the direct ancestors of the tagged nodes to produce $\mathcal{S}^{k+1}$. When coarsening, the operators corresponding to the coarsened group of siblings are removed from $\mathcal{S}^{k}$ yielding $\mathcal{S}^{k'}$, then each ancestor is updated to produce $\mathcal{S}^{k+1}$. When updating the ancestors of the tagged nodes, the same 4-to-1 merge algorithm outlined in \refalg{alg:build_merge} is used, just on a per-level basis for each direct ancestor. Any coarse-fine interfaces that are introduced during this mesh adaptation are handled using the same ``coarsen patch'' approach outlined in \refsec{sub:mesh_adaptivity}.
+
+As it relates to the \gls{qahps} method, for an initial mesh ($\mathcal{Q}^{0}_{L}$ and $\mathcal{Q}^{0}_{P}$) and factorization ($\mathcal{S}^{0}$), the build, upwards, and solve stages all need to be called. However, each subsequent solve only needs to call the upwards and the solve stages. When the mesh is adapted, the factorization set is updated accordingly. We note that technically the upwards stage (i.e., computing \htau and \wtau) could also be done adaptively, however because this data depends on the right-hand side which often changes between solves anyways, we choose to call the upwards stage for each solve.
+
+\subsection{Propagating Up a Quadtree}
+
+When a node is tagged for coarsening or refinement and then adapted accordingly, the direct ancestors of the tagged node must also be updated. We do this through a {\em propagate} algorithm. The propagate algorithm updates the ancestors of a tagged node by iterating up the levels in the quadtree and calling a family callback for each direct ancestor. From \reffig{fig:adaptive-tree-rebuild-01}, these are the orange nodes, with the green nodes supplying their data as part of the family callback.
+
+\refalg{alg:propagate} contains the algorithm for the propagate function. This iterates up the tree level-by-level by successively removing the last index of the path, then gathering the family of nodes that participate in the family callback. For the \gls{qahps} method, the family callback supplied to this is \refalg{alg:build_merge}, the 4-to-1 merge algorithm.
+
+\begin{algorithm}
+    \caption{\texttt{Propagate} Function}
+    \begin{algorithmic}[0]
+        \Require Tagged Node: $\tau$, \texttt{FamilyCallback(parent\_node, children\_nodes)}
+        \State Let \texttt{path} be the path of the tagged node
+        \State Let \texttt{map} be the key-value lookup table between a path and the node
+        \State Call \texttt{PopBack(path)} \Comment{Remove the last character of the path}
+        \While{\texttt{Length(path)} $> 0$}
+            \State Let \texttt{parent\_node} = \texttt{map[path]}
+            \State Let \texttt{children\_nodes} = \{\texttt{map[path + ``0''], map[path + ``1''], map[path + ``2''], map[path + ``3'']}\}
+            \State Call \texttt{FamilyCallback(parent\_node, children\_nodes)}
+            \State Call \texttt{PopBack(path)}
+        \EndWhile
+    \end{algorithmic}
+    \label{alg:propagate}
+\end{algorithm}
+
+When refining or coarsening a node, the propagate function gets called during the initialization of the newly created refined nodes or newly created coarsened node.
+
+% For applications where the factorization set is used multiple times (time dependent problems, multiple right-hand sides, etc.), the build stage is called only after the creation of an initial mesh. When the 
