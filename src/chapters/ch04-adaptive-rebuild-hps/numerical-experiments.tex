@@ -37,13 +37,6 @@ In this numerical experiment, we seek to compare the timing between a full build
 {\bf Discussion}
 As shown in \reffig{fig:full-vs-adaptive-time-comparison}, the time to solution for each successive solve is much faster for the adaptive-rebuild method. For the full \gls{qahps} method, the build stage dominates the time per iteration. The build stage can effectively be done only once per level instead of for all families in the quadtree. Updating the factorization set $\mathcal{S}$ during the refinement does add overhead to the refinement process (and would do so for coarsening as well), however, this overhead is minimal compared to the full merge traversal for the build stage. The timing for the upwards and solve stages for both methods remains the same, which is expected.
 
-% \begin{figure}
-%     \centering
-%     \includegraphics[width=\textwidth, clip=true, trim={40 0 40 40}]{figures/full-vs-adaptive-time-comparison-no-title.pdf}
-%     \caption{[TODO]}
-%     \label{fig:full-vs-adaptive-time-comparison}
-% \end{figure}
-
 \begin{figure}
     \centering
     \begin{subfigure}[t]{1\textwidth}
@@ -56,6 +49,6 @@ As shown in \reffig{fig:full-vs-adaptive-time-comparison}, the time to solution 
         \caption{Adaptive build method}
         \label{fig:adaptive-time-comparison}
     \end{subfigure}
-    \caption{Comparison of full vs. adaptive build methods for the random refinement experiment (\refsec{sub:random-refinement}). In each iteration, a random leaf node is refined and the elliptic problem is solved with the QAHPS method. Note the scale of the y-axis in both plots.}
+    \caption{Comparison of full vs. adaptive build methods for the random refinement experiment (\refsec{sub:random-refinement}). In each iteration, a random leaf node is refined and the elliptic problem is solved with the QAHPS method. Lower is better.}
     \label{fig:full-vs-adaptive-time-comparison}
 \end{figure}
