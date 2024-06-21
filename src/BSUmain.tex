@@ -52,6 +52,8 @@
 \newcommand{\refalg}[1]{Algorithm \ref{#1}}
 \newcommand{\reftab}[1]{Table \ref{#1}}
 \newcommand{\refeqn}[1]{Equation \ref{#1}}
+\newcommand{\refapdx}[1]{Appendix \ref{#1}}
+\newcommand{\refrem}[1]{Remark \ref{#1}}
 
 \newcommand{\donna}[1]{{\color{blue}DC : #1}}
 \newcommand{\amrex}{AMReX\xspace}
@@ -310,7 +312,8 @@
 % \cleardoublepage
 \addcontentsline{toc}{chapter}{Appendices}
 \appendix
-\chapter{Relevant Software}
+\chapter{EllipticForest: A Direct Solver Library for Elliptic Partial Differential Equations on Adaptive Meshes}
+\label{apdx:elliptic-forest}
 \input{chapters/ap01-software/EllipticForest.tex}
 % \input{chapters/ap01-software/p4est.tex}
 % \input{chapters/ap01-software/FISHPACK.tex}

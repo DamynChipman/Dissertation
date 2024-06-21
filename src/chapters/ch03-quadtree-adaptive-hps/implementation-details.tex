@@ -11,6 +11,7 @@ When solving \refeqn{eq:elliptic-pde} on a single leaf patch, the method used to
 Ideally, the patch solver routine takes advantage of fast and optimized solvers for the \gls{bvp} \refeqn{eq:elliptic-pde}. For constant coefficient problems, we wrap the FISHPACK routines \citep{swarztrauber1999fishpack} provided in the FISHPACK90 library \citep{adams2016fishpack90}. FISHPACK solves \refeq{eq:elliptic-pde} using a cyclic-reduction method, providing a fast and efficient solver for ``small'' problems. As we use a cell-centered discretization for use with a finite-volume code, we wrap the \texttt{hwscrt} method for our \texttt{PatchSolver}. When solving the variable coefficient problem, we wrap a patch solver written with PETSc \citep{anl2023petsc} that solves \refeqn{eq:elliptic-pde} using a five-point stencil method.
 
 \subsection{Building Leaf Level Operators}
+\label{sub:building-leaf-level-operators}
 
 At the leaf level, two operators are required: \Stau and \Ttau. The \texttt{PatchSolver} takes the role of \Stau on the leaf. We explicitly compute the matrix \Ttau through use of the patch solver. We define a function \texttt{BuildD2N} that computes \Ttau according to \refeqn{eq:Ttau-leaf}. The \gls{d2n} matrix depends solely on the discretization -- it is independent of boundary data or inhomogenenous data. The matrix \Ttau is computed column-by-column by solving \refeq{eq:elliptic-pde} with columns of the identity matrix $\textbf{I} \in \real^{4M \times 4M}$ as Dirichlet data \gtau:
 \begin{align}

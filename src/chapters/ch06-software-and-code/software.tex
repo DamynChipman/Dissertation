@@ -1,14 +1,20 @@
-\section{Software for Elliptic PDEs}
+\section{Software for Case Studies}
 
 \subsection{EllipticForest}
 \label{sub:elliptic-forest}
 
-[TODO]
+EllipticForest contains a user extendable and coupling-ready implementation of the \gls{qahps} method. It uses modern object-oriented software features for users to extend patch classes for different discretizations and patch solvers. All of the features of the algorithms outlined in this dissertation are able to be used, including optimized solvers for constant coefficient problems, parallelism, and adaptivity.
 
 \subsection{ForestClaw and ThunderEgg}
+\label{sub:thunder-egg}
 
-[TODO]
+ThunderEgg \citep{aiton2022thunderegg} is a repository that contains multigrid solvers and preconditioners for elliptic \gls{pdes} for \gls{amr}. Similar to EllipticForest, it is built on top of \pforest \citep{burstedde2011p4est,burstedde2020parallel} for efficient mesh management. It supports parallelism through MPI \citep{mpi40}.
+
+ThunderEgg is coupled into the ForestClaw library. ForestClaw \citep{calhoun2017forestclaw} is a software library containing parallel, multi-block adaptive finite volume solvers for \gls{pdes}. ForestClaw also extends \pforest \citep{burstedde2011p4est,burstedde2020parallel} with multiple \gls{pdes} solvers. These cases are solved with the ForestClaw interface to ThunderEgg.
 
 \subsection{PETSc}
+\label{sub:petsc}
 
-[TODO]
+The Portable, Extensible Toolkit for Scientific Computing (PETSc) is a software library for scalable scientific applications. It supports MPI \citep{mpi40} for distributed memory parallelism and GPUs through multiple vendor backends (CUDA, HIP, Kokkos, OpenCL). The design of PETSc allows for users to implement a discretization to solve a \gls{pde} (for example, a five point stencil finite difference discretization), and then use any number of compatible solvers and preconditioners. The matrix type (sparse, dense, CPU, GPU), the preconditioner type, the solver type, and many other options can be changed at runtime.
+
+The solvers for the elliptic cases in this chapter are extended from the examples in the book by \cite{bueler2020petsc}.

@@ -1,3 +1,7 @@
 \section{Conclusion}
 
-[TODO]
+The software implementation of the \gls{qahps} method is highlighted in this chapter. EllipticForest is an object-oriented software library ready for extension and integration into application codes.
+
+The case studies presented in this chapter compare common iterative solvers to the direct \gls{qahps} solver. This includes with PETSc's \gls{cg}, \gls{gmres}, and \gls{bcgs} for uniform cases and ThunderEgg's multigrid solvers for adaptive cases. The case studies target elliptic \gls{pdes} that arise in physics and engineering modeling, such as the variable coefficient Poisson equation and the high wave number Helmholtz equation.
+
+Furthermore, the case studies show that the adaptive and uniform implementations of the \gls{qahps} method found in EllipticForest are competitive with iterative solvers commonly used in research and development codes. This includes the full \gls{qahps} method (build, upwards, and solve stages). After the initial factorization is computed, subsequent direct solves would be orders of magnitude faster than subsequent iterative solves.

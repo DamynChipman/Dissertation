@@ -446,6 +446,7 @@ A solve stage of the \gls{qahps} method starts with data $g(x,y)$ defined on the
 
 \begin{remark}
     For a constant coefficient problem on a uniformly refined mesh, only one operator \Ttau per level needs to be computed and stored. In the build stage, this single operator can be used in place of each child patch. This significantly reduces the time needed in the build stage.
+    \label{thm:operator-caching}
 \end{remark}
 
 \subsection{Coarse-Fine Interfaces}
