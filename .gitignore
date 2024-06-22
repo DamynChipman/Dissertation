@@ -10,6 +10,5 @@ src/main.tex
 **/*.gls
 **/*.ist
 **/*.nlo
-**/*.pdf
 **/*.gz
 **/*.DS_Store
