@@ -1,0 +1,32 @@
+\section{Future Work}
+\label{sec:future-work}
+
+The methods and results presented herein provide a foundation for future work. Several areas of application and extension include, but are not limited to, the following:
+
+{\bf Time-Dependent Problems and Parabolic PDEs}
+Many parabolic equations are time-dependent versions of several elliptic \gls{pdes}. Examples include the heat equation
+\begin{align}
+    \frac{\partial u(\textbf{x})}{\partial t} &= \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right)
+\end{align}
+and the reaction-diffusion equation
+\begin{align}
+    \frac{\partial u(\textbf{x})}{\partial t} &= D \nabla^2 u(\textbf{x}) + R(u(\textbf{x})).
+\end{align}
+When these equations are solved via a method of lines approach (discretize spatial and temporal derivatives separately), the time dependence can be solved either explicitly or implicitly. Solving time-dependent problems with implicit time stepping schemes requires solving a linear system of equations. An appealing choice to solve the associated linear system would be to use a direct method and build up a factorization that can be applied to each time step.
+
+In the context of \gls{amr}, the \gls{qahps} method can be used to build an initial factorization and then adapt it each time step according to the adaptivity of the mesh. Although adapting the factorization introduces overhead into the refining and coarsening steps of an algorithm, it can be done at the same order of magnitude to that of the solve stage, providing linear solver performance per time step. This is on par with adaptive iterative methods that require convergence each time step.
+
+The \gls{hps} method has been applied to parabolic equations \citep{babb2018hps}. There are additional terms that show up in the merged \gls{d2n} operator that must be taken into consideration that can be extended to the \gls{qahps} method.
+
+{\bf Unstructured Meshes and Other Discretizations}
+The \gls{hps} method is not limited to being solved with 2D, finite volume meshes on a logically square domain. As a domain decomposition method, the factorization can be built up with any discretization scheme and the patch solver can be any solver that solves the associated \gls{bvp}. Indeed, in the original formulation of the \gls{hps} method, high-order spectral discretization is used \citep{gillman2014direct}. The patches can be mapped to non-square domains as is done in finite element methods, and was done with the UltraSEM method \citep{fortunato2020ultraspherical}. As the matrix assembly and linear solve steps are often the most expensive in a finite element code, the application of the \gls{hps} method to the FEM literature is promising.
+
+Through use with \pforest, multi-block domains are a popular choice for solving \gls{pdes} on complex geometries. The forest of octree approach used in \pforest provides room for potential application. Questions that need to be considered in that approach include: how is the Dirichlet data provided at tree boundaries and how is the factorization built up beyond a single tree.
+
+{\bf Parallel Improvements}
+The parallel performance provided in this research offer room for improvement. While many hierarchical solvers (i.e., multigrid) struggle with communication bottlenecks at the top levels, techniques have been developed to reduce the overhead with the global communication required. Ideas like better overlap of compute and communication as well as a chain of separate forests for the levels \citep{bangerth2012algorithms}.
+
+{\bf Applications and Software Development}
+As an elliptic solver, the \gls{qahps} method can be applied to any problem that requires the solution of elliptic \gls{pdes}. This includes coupling with hyperbolic or parabolic problems. A particularly interesting application is the Navier-Stokes equations through an operator splitting approach (the projection method \citep{chorin1967numerical}). Through operator splitting, the advective terms and the diffusive terms are solved for at different pseudo time steps. A hyperbolic solver can be used for the advective terms, while the \gls{qahps} method can be used to efficiently solve the pressure Poisson equation. Especially with \gls{amr} techniques, the \gls{qahps} method could solve the linear system with linear complexity for each time step.
+
+As software, EllipticForest \citep{chipman2024ellipticforest} is ready for coupling with additional codes for multiphysics and additional applications. The object oriented design of the code allows for future users to extend the patch solver and patch discretization classes to fit the needs of the application.
