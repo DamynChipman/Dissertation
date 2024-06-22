@@ -1,5 +1,5 @@
-\section{Literature Review}
-\label{sec:lit-review}
+\section{Overview of Elliptic PDEs and Solution Methods}
+\label{sec:the-elliptic-pde}
 
 \subsection{The Elliptic Partial Differential Equation}
 
@@ -33,7 +33,6 @@ Although analytical solutions exist for some simple variations of the problems a
 \label{sec:numerical-methods-for-elliptic-pdes}
 
 \subsubsection{Finite Difference}
-\label{subsub:finite-difference}
 
 \begin{figure}
     \centering
@@ -52,7 +51,7 @@ where $N_x, N_y$ is the number of points in the x- and y-direction and grid spac
     \Delta x &= \frac{x_u - x_l}{N_x - 1} \\
     \Delta y &= \frac{y_u - y_l}{N_y - 1}.
 \end{align}
-These points are shown in the first plot of Figure \ref{fig:discretization_methods}. This type of discretization is known as the {\em finite difference method}. In the finite difference approach, the expressions for the derivatives in a PDE are replaced with Taylor series approximations. For example, a second order accurate, central-difference approximation to the second derivative can be given as
+These points are shown in the first plot of Figure \ref{fig:discretization_methods}. This type of discretization is known as the {\em finite difference method}. \damyn{(Cite something here?)}. In the finite difference approach, the expressions for the derivatives in a PDE are replaced with Taylor series approximations. For example, a second order accurate, central-difference approximation to the second derivative can be given as
 \begin{align}
     \frac{\partial^2 u}{\partial x^2} &= \frac{u(x - \Delta x, y) - 2u(x, y) + u(x + \Delta x, y)}{\Delta x^2} + \mathcal{O}(\Delta x^2)
 \end{align}
@@ -97,7 +96,7 @@ We also index the RHS similarly to $u(x,y)$ resulting in a RHS vector $\textbf{f
 \begin{align}
     \textbf{A} \textbf{u} = \textbf{f} + \textbf{b}
 \end{align}
-where $\textbf{b}$ contains any updates necessary for any type of boundary condition \citep{leveque2007finite}.
+where $\textbf{b}$ contains any updates necessary for any type of boundary condition.
 
 \subsubsection{Finite Volume}
 
@@ -117,13 +116,12 @@ For the finite volume method, we integrate over the cell domain $\Omega_i$
 \end{align}
 and use the divergence theorem to relate the volume integral of the flux to the surface integral of the surface:
 \begin{align}
-    \frac{\partial}{\partial t} \int_{\Omega_i} q(x,y,t) d\Omega_i + \int_{\Gamma_i} \beta(x,y) \nabla q(x,y,t) \cdot \hat{n}\ d\Gamma_i = \int_{\Omega_i} s(x,y,t) d\Omega_i.
+    \frac{\partial}{\partial t} \int_{\Omega_i} q(x,y,t) d\Omega_i + \int_{\Gamma_i} \beta(x,y) \nabla q(x,y,t) d\Gamma_i = \int_{\Omega_i} s(x,y,t) d\Omega_i.
 \end{align}
 Now, if we only consider the steady-state case ($\frac{\partial q}{\partial t} = 0$), then we get
 \begin{align}
-    \int_{\Gamma_i} \beta(x,y) \nabla q(x,y) \cdot \hat{n}\ d\Gamma_i = \int_{\Omega_i} s(x,y) d\Omega_i.
+    \int_{\Gamma_i} \beta(x,y) \nabla q(x,y) d\Gamma_i = \int_{\Omega_i} s(x,y) d\Omega_i.
 \end{align}
-To generate a system of equations, we will consider a uniform Cartesian mesh as shown in \reffig{fig:discretization_methods} (top-right), where each blue square is a control volume that represents $\Omega_i$. We break the boundary integral...
 
 \damyn{[Finish this section; reference figure; point to finite difference stencil similarities.]}
 
@@ -142,9 +140,9 @@ The idea behind the finite element method is to use basis functions
 \begin{align}
     u(x,y) \approx \bar{u} = \sum_{k=1}^{N_k} c_k \phi(x,y)
 \end{align}
-inside each element $\Omega_i$, where $\Omega = \cup_{i = 1}^{N_{\text{elem}}} \Omega_i$. When the same basis functions for the test functions $v$ are also used, this leads to the Galerkin finite element method. Upon substitution of the above into \ref{eq:poisson_weak_form}, and integrating the basis function with either quadrature or with analytical expressions, a linear system is formed for the coefficients $c_k$. This process is referred to as matrix assembly and can be done for local elements or global elements \citep{giraldo2020introduction}.
+inside each element $\Omega_i$, where $\Omega = \cup_{i = 1}^{N_{\text{elem}}} \Omega_i$. When the same basis functions for the test functions $v$ are also used, this leads to the Galerkin finite element method. Upon substitution of the above into \ref{eq:poisson_weak_form}, and integrating the basis function with either quadrature or with analytical expressions, a linear system is formed for the coefficients $c_k$.
 
-There are several variations of the finite element method. Depending on the space from which the test functions $v$ are from, one can arrive at the continuous finite element method or the discontinuous finite element method. When $v$ and $u$ are built up with the same basis function (the Galerkin principle), this leads to the Galerkin finite element method \citep{thomee2007galerkin}. By choosing certain shape or basis functions, one can derive different variations of the finite element method, including the B-spline finite element method \citep{kagan1998new} and the spectral element method \citep{patera1984spectral}.
+There are several variations of the finite element method. The method explained above forms a global linear system involving all elements. To avoid this, mapping a physical element to some reference element, makes the contributions from a single element only influence itself and its neighbors. This makes the coefficient matrix in the linear system much more sparse and structured, making it easier to solve. Additionally, by not imposing continuity across element boundaries, one arrives at the discontinuous Galerkin method, where the discontinuities are handled through element fluxes. By choosing certain shape or basis functions, one can derive different variations of the finite element method, including the B-spline finite element method \citep{kagan1998new} and the spectral element method \citep{patera1984spectral}.
 
 \subsubsection{Spectral Methods}
 
@@ -156,31 +154,48 @@ where the coefficients are chosen to minimize a norm, such as the $L^2$ norm of 
 \begin{align}
     x_i &= a + \frac{1}{2}(b - a)\Big(1 + \cos \big( \pi (1 - \frac{i}{N + 1}) \big) \Big), i = 0, ..., N + 1.
 \end{align}
-These points are shown on the last plot of Figure \ref{fig:discretization_methods}. With a good basis of grid points, spectral methods can achieve very fast convergence. The linear system formed by this method will be dense as it functions like a high-order interpolation scheme. However, as convergence is much faster than high-order finite difference methods, one can use far fewer points on a grid, so the size of the system is kept small. If one uses Fourier series as the basis functions $\phi$, one can accelerate the solution of the linear system using fast Fourier Transform algorithms. Though, due to the periodic nature of the Fourier series, it is more difficult to implement non-periodic boundary conditions \citep{leveque2007finite,townsend2015automatic}.
+These points are shown on the last plot of Figure \ref{fig:discretization_methods}. With a good basis of grid points, spectral methods can achieve very fast convergence. The linear system formed by this method will be dense as it functions like a high-order interpolation scheme. However, as convergence is much faster than high-order finite difference methods, one can use far fewer points on a grid, so the size of the system is kept small. If one uses Fourier series as the basis functions $\phi$, one can accelerate the solution of the linear system using fast Fourier Transform algorithms. Though, due to the periodic nature of the Fourier series, it is more difficult to implement non-periodic boundary conditions (\citep{leveque2007finite}, \citep{townsend2015automatic}).
 
-% \subsubsection{Other Methods and Summary}
+% [TODO: Rework this section]
+%
+% In each of the methods presented above, the function approximation is found by forming and solving a linear system. In spectral methods, one uses integral transformations such as the Fourier or Laplace Transforms to differentiate. For example, the Fourier Transform of a function is given as
+% \begin{align}
+%     F(k) = \mathcal{F}[f(x)] = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} f(x) e^{ikx} dx
+% \end{align}
+% with it's inverse
+% \begin{align}
+%     f(x) = \mathcal{F}^{-1}[F(k)] = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} F(k) e^{ikx} dk.
+% \end{align}
+% The strength of these methods show when considering the derivatives of $f(x)$:
+% \begin{align}
+%     \frac{\partial^n f}{\partial x^n} &= \frac{\partial^n}{\partial x^n} \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} F(k) e^{ikx} dk \\
+%     &= \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} (ik)^{n} F(k) e^{ikx} dk
+% \end{align}
+% So any $nth$ derivative can be expressed in terms of a Fourier and inverse Fourier transform:
+% \begin{align}
+%     \frac{\partial^n f}{\partial x^n} &= \mathcal{F}^{-1}[(ik)^n \mathcal{F}[f(x)]].
+% \end{align}
+% In practice, one can use fast algorithms such as the famous Fast Fourier Transform to perform this arithmetic.
+%
+% A minor drawback to this method is the need to work on a periodic domain in order for the Fourier Transform to function properly. This makes enforcing boundary conditions difficult. Thus, extensions to spectral methods include using a better basis of points than evenly spaced points, such as Chebyshev nodes. Chebyshev nodes defined in the interval $(-1, 1)$ are given as
+% \begin{align}
+%     x_k = \cos \Big( \frac{2k - 1}{2n} \pi \Big), k = 1, ..., n.
+% \end{align}
+% Using these nodes can increase the accurarcy of the method as well as provide a better set of collocation points for interpolation \citep{igel1999wave}.
 
-% These methods are not all the possible ways to solve an elliptic PDE. Other methods include using quadrature methods on the integral formulation of the PDE, as well as collocation methods such as radial basis function approximations. However, the methods we reviewed show some of the most classic approaches to solving elliptic PDEs.
+\subsubsection{Other Methods and Summary}
 
-\subsection{Adaptive Mesh Refinement for Elliptic PDEs}
-
-For many applications, uniform Cartesian meshes are prohibitively expensive and so local mesh adaptivity can be used to resolve detailed solution features.  One common approach to Cartesian mesh adaptivity is the patch-based method, originally developed by Berger, Oligier and later Colella \citep{berger1989local,berger1984adaptive}. In a patch-based approach, the computational mesh is defined as a union of overlapping rectangular patches, with finer patches placed on top of coarser patches in regions where resolution for  detailed solution features is needed.  These rectangular patches are of arbitrary size, but align with mesh coordinates of the underlying coarser mesh. Proper nesting rules ensure that every patch is completely contained within coarser patches at the same coarse resolution. Software libraries implementing methods related to this patch-based approach include Chombo \citep{colella2009chombo}, \amrex \citep{zhang2019amrex}, and SAMRAI \citep{hornung2006managing}.
-
-A second approach to Cartesian mesh adaptivity, and the approach used in this research, is to construct a composite mesh by filling leaves of an adaptive quadtree with non-overlapping locally Cartesian grids of the same size. Quadrants in the quadtree are refined by subdividing the quadrant into four smaller quadrants, each occupying one quarter of the space of the larger quadrant. Similarly, coarsening occurs when four finer quadrants are replaced by a single coarser quadrant.  Every quadrant in the quadtree layout contains a mesh of the same size, but since each quadrant occupies a space determined from their level in the quadtree, the effective resolution of each grid is finer or coarser, depending on their level in the quadtree.  Adaptive, Cartesian software libraries using a tree-based approach include PARAMESH \citep{globisch1995parmesh}, FLASH-X \citep{dubey2022flash} and ForestClaw \citep{calhoun2017forestclaw}.
-
-\damyn{[TODO: Include figure depicting patch-based vs. tree-based AMR methods.]}
-
-Solving elliptic problems on an adaptive hierarchy of meshes introduces technical challenges that are not present with uniform Cartesian meshes. Methods that require matrix assembly are much more difficult to use on adaptive meshes, since row entries corresponding to discretizations at boundaries between coarse and fine meshes are based on non-trivial stencils.  The Hypre library \citep{falgout2002hypre} provides some tools for matrix assembly, but these tools are not immediately useful in adaptive mesh case. A more common approach is to use matrix-free methods such as multigrid or Krylov methods.  Multigrid may be particularly well suited for adaptive meshes, since the adaptive levels are automatically built into the mesh hierarchy. \amrex, for example, makes extensive use of multigrid for their solvers \citep{zhang2019amrex}.  However, the performance of iterative solvers is largely problem dependent and also affected by irregular stencils at boundaries between coarse and fine meshes.
+These methods are not all the possible ways to solve an elliptic PDE. Other methods include using quadrature methods on the integral formulation of the PDE, as well as collocation methods such as radial basis function approximations. However, the methods we reviewed show some of the most classic approaches to solving elliptic PDEs.
 
 \subsection{Solution Methods for Elliptic Partial Differential Equations}
 \label{sec:solution-methods-for-elliptic-pdes}
 
-Regardless of the discretization method, solving elliptic PDEs often results in the need to solve a linear system of equations. To generally talk about these solution methods, we assume that we form the linear system
+The discretization methods described in \refsec{sec:numerical-methods-for-elliptic-pdes} result in a linear system. To generally talk about these solution methods, we assume that we form the linear system
 \begin{align}
     \textbf{A} \textbf{u} = \textbf{b}
     \label{eq:ls}
 \end{align}
-where $\textbf{A} \in \mathbb{R}^{N \times N}$ is a coefficient matrix formed from one of the discretization methods, $N$ is the number of degrees of freedom, $\textbf{u} = u_i = u(x_i)$ for $i \in \textbf{I}_x$, index set $\textbf{I}_x$ for the discrete domain, and $\textbf{b}$ is the right-hand side vector encoded with the boundary conditions and the inhomogeneous function $f(\textbf{x})$. The goal is to solve for $\textbf{u}$ where we take advantage of the sparsity and structure of $\textbf{A}$. We organize the various methods into the following three categories: iterative methods, direct methods, and hierarchical methods.
+where $\textbf{A} \in \mathbb{R}^{N \times N}$ is a coefficient matrix formed from one of the discretization methods, $N$ is the number of degrees of freedom, $\textbf{u} = u_i = u(x_i)$ for $i \in \textbf{I}_x$, index set $\textbf{I}_x$ for the discrete domain, and $\textbf{b}$ is the right-hand side vector encoded with the boundary conditions and the inhomogeneous function $f(\textbf{x})$. The goal is to solve for $\textbf{u}$ where we take advantage of the sparsity and structure of $\textbf{A}$. We organize the various methods into the following three categories: 1) iterative methods, 2) direct methods, and 3) hierarchical methods.
 
 \subsubsection{Iterative Methods}
 \label{sub:iterative-methods}
@@ -246,7 +261,7 @@ We will look at how direct methods are useful as we consider some common direct 
 
 Many direct methods are based on matrix factorizations. Perhaps the most well-known is the LU decomposition. LU decomposition factors the coefficient matrix into a lower and upper triangular matrix: $\textbf{A} = \textbf{L} \textbf{U}$. The idea is to use Gaussian elimination to eliminate entries below the main diagonal, and then use back-substitution to solve for each entry in $\textbf{u}$. In general, LU decomposition requires $\mathcal{O}(N^3)$ floating point operations and thus is impractical for large matrices. There are banded solvers for Gaussian elimination that can take advantage of the sparsity of a matrix. The Cholesky decomposition is a variant of Gaussian elimination for symmetric matrices. Other matrix factorizations include the QR-decomposition, $\textbf{A} = \textbf{Q} \textbf{R}$, and the singular value decomposition, $\textbf{A} = \textbf{U} \boldsymbol{\Sigma} \textbf{V}^*$.
 
-For a finite difference discretization of elliptic PDEs, $\textbf{A}$ is banded and sparse, and more efficient algorithms for LU decomposition exist. For 1D problems, $\textbf{A}$ is diagonally dominant and sparse with the bandwidth (the number of entries off the main diagonal in a matrix) dependent on the order of the stencil. For the stencil shown in the second order discretization in \ref{eq:poisson_FD}, $\textbf{A}$ is tridiagonal. This allows us to use algorithms such as Thomas's algorithm for solving a tridiagonal system in $\mathcal{O}(N)$ steps \citep{higham2002accuracy}. In higher dimensions, block versions of Thomas's algorithm exist \citep{quarteroni2010numerical}.
+For a finite difference discretization of elliptic PDEs, $\textbf{A}$ is banded and sparse, and more efficient algorithms for LU decomposition exist. For 1D problems, $\textbf{A}$ is diagonally dominant and sparse with the bandwidth (the number of entries off the main diagonal in a matrix) dependent on the order of the stencil. For the stencil shown in the second order discretization in \ref{eq:poisson_FD}, $\textbf{A}$ is tridiagonal. This allows us to use algorithms such as Thomas's algorithm for solving a tridiagonal system in $\mathcal{O}(N)$ steps (\citep{higham2002accuracy}). In higher dimensions, block versions of Thomas's algorithm exist (\citep{quarteroni2010numerical}).
 
 Compared to iterative methods, direct methods will terminate in a finite number of steps. Direct methods are more fit for ``black-box" implementations. However, because most direct methods need to explicitly form $\textbf{A}$, they are more difficult to implement with limited computing resources. Indeed, going to higher dimensions and higher orders often dramatically increases memory and compute requirements.
 
@@ -255,10 +270,9 @@ Compared to iterative methods, direct methods will terminate in a finite number 
 
 The methods grouped under hierarchical methods attempt to accelerate some of the ideas from iterative and direct methods by breaking the problem into a hierarchy of subproblems. By recursively breaking the original problem into smaller subproblems, significant improvements can be made in complexity and performance. We'll talk about three hierarchical methods here: the multigrid method, nested dissection, and the Hierarchical Poincaré-Steklov (HPS) method.
 
-% \subsubsubsection{The Multigrid Method}
-% \label{subsub:multigrid-method}
+\subsubsection{The Multigrid Method}
+\label{subsub:multigrid-method}
 
-{\bf The Multigrid Method}
 The multigrid method was introduced by Brandt in \citep{brandt1977multi}. It has been widely used in various applications and for all types of solution methods. Briggs in \citep{briggs2000multigrid} gives an overview and tutorial of the multigrid method.
 
 In the multigrid method, the idea is to use multiple levels of grids and solution methods on each level to solve a larger problem. To look at the multigrid method, we define the error in the linear system to be $\textbf{e} = \textbf{u}^{(k)} - \textbf{u}_{exact}$ (the difference between the exact solution and the $kth$ iteration). After a few iterations of a smoother (typically Jacobi's method), because of the local averaging, any high-frequency error is quickly dampened away. What takes longer to eliminate is the low-frequency error associated with the global problem. By coarsening the grid, the lower frequency error is dampened quicker. Multigrid combines the ability of iterative methods to locally reduce error and a coarsening grid technique to accelerate convergence.
@@ -276,27 +290,23 @@ In what is called the ``full multigrid" method, the process starts on the coarse
 
 The multigrid method allows one to accelerate an iterative solver. Multigrid methods are very effective as pre-conditioners for iterative methods. This is the general pattern of hierarchical methods: the ability to use classical iterative and direct methods on smaller grids where they perform well, and then ``scale" them up to larger problem sizes.
 
-% \subsubsubsection{Nested Dissection}
-% \label{subsub:nested-dissection}
+\subsubsection{Nested Dissection}
+\label{subsub:nested-dissection}
 
-{\bf Nested Dissection}
-The nested dissection method formulated by George in \citep{george1973nested} is a direct method that builds upon Gaussian elimination for problems on a grid. It is also the basis for forming what is called the multifrontal method \citep{liu1992multifrontal, davis2004algorithm}. By taking advantage of the ordering of points on a grid, one can permute $\textbf{A}$ to first eliminate points that split the mesh into two unconnected meshes. This permutation takes the form of $\textbf{P}^* \textbf{A} \textbf{P}$, where the goal is to form $\textbf{P}$ to reorganize $\textbf{A}$ in a way that eliminates points in an efficient manner.
+The nested dissection method formulated by George in \citep{george1973nested} is a direct method that builds upon Gaussian elimination for problems on a grid. It is also the basis for forming what is called the multifrontal method. By taking advantage of the ordering of points on a grid, one can permute $\textbf{A}$ to first eliminate points that split the mesh into two unconnected meshes. This permutation takes the form of $\textbf{P}^* \textbf{A} \textbf{P}$, where the goal is to form $\textbf{P}$ to reorganize $\textbf{A}$ in a way that eliminates points in an efficient manner.
 
-To detail nested dissection better, consider an $N \times N$ mesh such as a finite difference mesh discussed in Section \ref{subsub:finite-difference}. Assume that the initial ordering of points corresponds to an index set that iterates over the points in the mesh row-by-row. Now, the idea of nested dissection is to reorganize the points such that we first eliminate points down the middle of the mesh (i.e. the points at $x = 0$ in the first plot of Figure \ref{fig:discretization_methods}). Once these points are solved for, it spilts the mesh into two equally sized pieces that are disconnected. Each of the disconnected meshes now are smaller, and thus easier to solve. This idea of splitting the mesh into disconnected pieces by first eliminating points along an interface can be recursively applied to each split. This means that after dividing the mesh into two, one can divide those two meshes into four meshes, and so on. Recursive splitting is a common characteristic in hierarchical methods.
+To detail nested dissection better, consider an $N \times N$ mesh such as a finite difference mesh discussed in Section \ref{sec:elliptic}. Assume that the initial ordering of points corresponds to an index set that iterates over the points in the mesh row-by-row. Now, the idea of nested dissection is to reorganize the points such that we first eliminate points down the middle of the mesh (i.e. the points at $x = 0$ in the first plot of Figure \ref{fig:discretization_methods}). Once these points are solved for, it spilts the mesh into two equally sized pieces that are disconnected. Each of the disconnected meshes now are smaller, and thus easier to solve. This idea of splitting the mesh into disconnected pieces by first eliminating points along an interface can be recursively applied to each split. This means that after dividing the mesh into two, one can divide those two meshes into four meshes, and so on. Recursive splitting is a common characteristic in hierarchical methods.
 
 Nested dissection was first introduced by George in \citep{george1973nested}, and further generalized by Lipton et al. in \citep{lipton1979generalized}. Martinsson has a tutorial on nested dissection in \citep{martinsson2019fast}. In fact, nested dissection served as motivation for another hierarchical method proposed by Martinsson and Gillman called the Hierarchical Poincaré-Steklov method.
 
-% \subsubsubsection{The Hierarchical Poincaré-Steklov Method}
-% \label{subsub:hps-method}
+\subsubsection{The Hierarchical Poincaré-Steklov Method}
+\label{subsub:hps-method}
 
-{\bf The Hierarchical Poincaré-Steklov Method}
 The work done by Gillman and Martinsson in \citep{martinsson2004fast}, \citep{MARTINSSON2013460}, and \citep{gillman2014direct} (with a practical tutorial found in \citep{martinsson2015hierarchical}) culminate in what they call the Hierarchical Poincaré-Steklov (HPS) method. It is a direct solver for elliptic PDEs that is based on a binary tree of rectangular patches where the solution operator to $\textbf{A}$ is built by recursively merging child patches. Like direct methods, the HPS method involves a factorization step and a solve step. The chief advantage of the HPS method over other direct methods is that it does not require the explicit formulation and storage of $\textbf{A}$.
 
 The HPS method starts with an original problem domain, and recursively divides the domain in half. This creates a binary tree of patches as shown in Figure \ref{fig:solve}. Once the domain has been decomposed into this tree of patches, two operators are defined on the lowest level, called the leaf level. These operators are the solution operator $\textbf{S}$ and Dirichlet-to-Neumann (DtN) operator $\textbf{T}$. The solution operator maps boundary data to solution data on the interior of the patch (i.e. solves the local boundary value problem), and the DtN operator maps Dirichlet data on the boundary to Neumann data on the boundary. These operators can be formed using any elliptic PDE solver, including fast solvers like spectral methods. After forming these operators, the next step is to recursively merge each sibling patch up the tree. the merge step is demonstrated in Figure \ref{fig:merge}. This results in a global solution operator that can be stored and used multiple times (at different time steps or with varying boundary conditions, etc.), and is similar to a direct method matrix factorization. The final step is applying the solution operator to each level down the tree to obtain the solution everywhere in the domain. This step is just a matrix-vector multiplication and is very fast.
 
-Similar to other direct methods, the HPS method forms an in-memory solution operator that can be applied to several right-hand side vectors. This property makes it ideal for problems where several elliptic solves are necessary. While most iterative methods have better asymptotic performance than other direct methods, the HPS method can be accelerated using hierarchically block seperable (HBS) matrix algebra to achieve near linear asymptotic performance \citep{gillman2014direct}.
-
-The \gls{hps} method has been applied to solve 3D elliptic \gls{pdes} \citep{hao2016direct}, has been coupled with the spectral element method \citep{fortunato2020ultraspherical}, and implemented on adaptive meshes \citep{babb2018accelerated, geldermans2019adaptive,chipman2024fast}. Recently, the \gls{hps} method has also been implemented in parallel, targeting shared-memory machines \citep{beams2020parallel}, distributed-memory machines \citep{yesypenko2022parallel}, and \gls{gpu} devices \citep{yesypenko2022gpu}. More details on the \gls{hps} method can be found in Chapters 19--27 of \citep{martinsson2019fast} and a tutorial on the \gls{hps} method can be found in \citep{martinsson2015hierarchical}.
+Similar to other direct methods, the HPS method forms an in-memory solution operator that can be applied to several right-hand side vectors. This property makes it ideal for problems where several elliptic solves are necessary. While most iterative methods have better asymptotic performance than other direct methods, the HPS method can be accelerated using hierarchically block seperable (HBS) matrix algebra to achieve near linear asymptotic performance (\citep{gillman2014direct}).
 
 \begin{figure}
     \centering
@@ -311,18 +321,3 @@ The \gls{hps} method has been applied to solve 3D elliptic \gls{pdes} \citep{hao
     \caption{HPS Solve Stage. Once $\textbf{S}_0$ is formed, apply it to the top level Dirichlet data to get boundary (and solution) data on the interface of the children. Apply the patch solution operator down the tree until each leaf has it's local boundary information. Then apply the solution operator to get the solution data in the interior of each leaf.}
     \label{fig:solve}
 \end{figure}
-
-
-% \subsection{Fast Solvers for Elliptic PDEs}
-
-% The linear systems formed by discretizations of elliptic \gls{pdes} are sparse and banded. Numerical linear algebra techniques that take advantage of this structure are ideal. Efficient solvers have been developed for uniform Cartesian meshes, such as the Unsymmetrical Multifrontal method implemented in the UMFPACK code \citep{davis2004algorithm} or the Cyclic Reduction method \citep{swarztrauber1974direct} as implemented in the FISHPACK library \citep{swarztrauber1999fishpack,adams2016fishpack90}.
-
-% \citet{gillman2014direct} describe a direct solver for elliptic problems on a binary tree structure. The goal is to build up a factorization by successively merging subdomains via a class of Poincar\'e-Steklov operators \citep{quarteroni1991theory} called \gls{d2n} operators. It is a domain decomposition method that was originally inspired by the partitioning scheme of nested dissection \citep{george1973nested,lipton1979generalized}. This approach does not require any matrix assembly on the composite mesh and can be used with any uniform grid solver at the leaf level. In their original work, \citet{gillman2014direct} use high-order spectral collocation methods and low-rank optimization to achieve $\mathcal O(N)$ factorization complexity. This method has come to be known as the \gls{hps} method \citep{martinsson2015hierarchical}. The \gls{hps} method has been applied to solve 3D elliptic \gls{pdes} \citep{hao2016direct}, has been coupled with the spectral element method \citep{fortunato2020ultraspherical}, and implemented on adaptive meshes \citep{babb2018accelerated, geldermans2019adaptive,chipman2024fast}. Recently, the \gls{hps} method has also been implemented in parallel, targeting shared-memory machines \citep{beams2020parallel}, distributed-memory machines \citep{yesypenko2022parallel}, and \gls{gpu} devices \citep{yesypenko2022gpu}. More details on the \gls{hps} method can be found in Chapters 19--27 of \citep{martinsson2019fast} and a tutorial on the \gls{hps} method can be found in \citep{martinsson2015hierarchical}. A more in-depth description of the \gls{hps} method outlined by \citet{gillman2014direct} will be provided in \refsec{subsub:hps-method}.
-
-% \damyn{[Direct vs. iterative solvers discussion.]}
-
-\subsection{Parallelism and Software}
-
-Parallel linear solvers using iterative or direct methods have been successfully developed and implemented. Parallel iterative methods include GMRES \citep{saad1986gmres}, the conjugate gradient method \citep{hestenes1952methods}, the \gls{amg} method \citep{yang2002boomeramg}, and the \gls{gmg} method \citep{sundar2012parallel} (with a good overview provided by \citet{chow2006survey}). Parallel direct methods include matrix factorization methods like LU-factorization, Cholesky factorization and the spectral value decomposition \citep{donfack2015survey, demmel1999asynchronous, gupta1997highly}.
-
-Several, large-scale and open-source codes currently exist to solve linear systems formed from elliptic PDEs. The hypre library \citep{falgout2002hypre} features scalable preconditioners for parallel multigrid methods. The SuperLU library \citep{li2005superlu} is a general purpose library for solving sparse linear systems using direct methods. Additional codes like PETSc \citep{anl2023petsc}, FLASH-X \citep{dubey2022flash}, and AMReX \citep{zhang2019amrex}, contain iterative and direct solvers that also work with \gls{amr}. The ForestClaw code \citep{calhoun2017forestclaw} coupled with the ThunderEgg repository \citep{aiton2022thunderegg} implements hyperbolic and elliptic solvers for finite volume meshes on adaptively refined quadtrees and octrees provided from \pforest. \pforest\ \citep{burstedde2011p4est,burstedde2020parallel} is a highly scalable AMR code that provides quadtree and octree data structures for users to build on top of. The EllipticForest library \citep{chipman2024ellipticforest} contains an implementation of the quadtree-adaptive HPS method, including the parallel algorithms outlined in this paper. Another code of interest is the ButterflyPACK library \citep{liu2018butterflypack} that solves large-scale dense systems with off-diagonal, low-rank structure like the matrices formed in the HPS method.

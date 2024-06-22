@@ -2,4 +2,9 @@
 
 The work presented in this dissertation is novel and broadens the field of fast, adaptive, and direct solvers for elliptic PDEs. Largely based on the HPS method of Gillman and Martinsson in \citep{gillman2014direct,martinsson2019fast} and focused on application with codes like \pforest\ \citep{burstedde2011p4est,burstedde2020parallel} and ForestClaw \citep{calhoun2017forestclaw}, this research includes significant contributions to the current literature. Modifying the HPS method for use with quadtree mesh data structures and on finite volume patches, the quadtree-adaptive HPS method that is outlined in \refchap{chap:qahps} and \refchap{chap:adaptive-build} is novel. The parallel implementation outlined in \refchap{chap:parallel} is also novel compared to current shared memory implementations.
 
-The research presented herein has been highlighted in peer-reviewed journals. \damyn{Add more here; JOSS, JCP, and (potentially) others.}
+This research has lead to multiple journal articles, including:
+\begin{itemize}
+    \item{Chipman, Damyn; Calhoun, Donna; \& Burstedde, Carsten. 2024. {\em A Fast Direct Solver for Elliptic PDEs on a Hierarchy of Adaptively Refined Qaudtrees}. Journal of Computational Physics. In Review.}
+    \item{Chipman, Damyn; Calhoun, Donna; \& Burstedde, Carsten. 2024 {\em MPI Implementation of the Quadtree-Adaptive Hierarchical Poincar\'e-Steklov Method}. In Preparation.}
+    \item{Chipman, Damyn. 2024. {\em EllipticForest: A Direct Solver Library for Elliptic Partial Differential Equations on Adaptive Meshes}. Journal of Open Source Software, 9(96), 6339.}
+\end{itemize}
