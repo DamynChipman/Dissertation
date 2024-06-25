@@ -9,7 +9,10 @@ The general problem we wish to solve is the variable coefficient elliptic \gls{p
 subject to either Dirichlet or Neumann boundary conditions:
 \begin{align}
     \label{eq:elliptic-pde-bc1}
-    u(\textbf{x}) &= g(\textbf{x}), \quad \textbf{x} \in \Gamma_D \subset \Omega \quad \mbox{or}\\
+    u(\textbf{x}) &= g(\textbf{x}), \quad \textbf{x} \in \Gamma_D \subset \Omega
+\end{align}
+or
+\begin{align}
     \label{eq:elliptic-pde-bc2}
     \frac{\partial u}{\partial n} \Big|_{\textbf{x}} &= v(\textbf{x}), \quad \textbf{x} \in \Gamma_N \subset \Omega.
 \end{align}
@@ -35,7 +38,7 @@ where $N_L$ is the number of leaf nodes. \ignore{A representation of the mesh in
     \end{cases}
     \quad \textbf{x} \in \Omega_i
 \end{align}
-where $\eta(\textbf{x})$ is a metric used to measure the need for refinement such as error or state variable gradient. $1$ indicates refinement and $0$ indicates no refinement. The user-defined variable $\epsilon_{R}$ is the refinement threshold. While a coarsening criteria $T_{C}$ is also defined similar to the refinement criteria, it is often not used in the initialization of $\mathcal{Q}_L$.
+where $\eta(\textbf{x})$ is a metric used to measure the need for refinement such as error or state variable gradient. A value of $1$ indicates refinement and a value of $0$ indicates no refinement. The user-defined variable $\epsilon_{R}$ is the refinement threshold. While a coarsening criteria $T_{C}$ is also defined similar to the refinement criteria, it is often not used in the initialization of $\mathcal{Q}_L$.
 
 We also define a {\em path-indexed quadtree} that is formally denoted as
 \begin{align}
@@ -75,4 +78,4 @@ where $\tau$ is a key that indicates the path of a node in $\mathcal{Q}_P$ and $
 % \begin{equation}
 %     u(x,y) = g(x,y),\ \ (x,y) \in \Gamma = \partial \Omega.
 % \end{equation}
-% For this paper, we assume that $b-a=d-c$ so that we can describe our mesh using a single quadtree and square mesh cells.  In general though, this is not a limitation of meshes generated using the multi-block ``forest-of-octrees'' capabilities of \pforest.  The primary contributions of this paper are an HPS solver for the constant coefficient ellitpic problem on an adaptively refined \pforest mesh. In future work, we will include fast linear algebra needed to reduce the complexity of the overall algorithm to $\mathcal O(N)$, a key contribution of the original HPS method developed by Gillman and Martinsson.
+% For this paper, we assume that $b-a=d-c$ so that we can describe our mesh using a single quadtree and square mesh cells.  In general though, this is not a limitation of meshes generated using the multi-block ``forest-of-octrees'' capabilities of \pforest.  The primary contributions of this paper are an HPS solver for the constant coefficient elliptic problem on an adaptively refined \pforest mesh. In future work, we will include fast linear algebra needed to reduce the complexity of the overall algorithm to $\mathcal O(N)$, a key contribution of the original HPS method developed by Gillman and Martinsson.

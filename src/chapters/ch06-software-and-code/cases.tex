@@ -16,13 +16,13 @@ for $(x,y) \in \Omega = [-1,1]^2$, which has the exact solution
 \end{align}
 Dirichlet boundary conditions are supplied at the boundary using the exact solution. This problem is chosen to allow for refinement at the corners for any solver that can take advantage of adaptivity.
 
-For adaptive solvers, the mesh is refined according to the right-hand side, which represents the curvature of the solution and is a good first attempt at \gls{amr} for elliptic \gls{pdes}. The levels range from $L_{\text{min}} = 2$ to $L_{\text{max}} = 5$ and the refinement threshold is $\epsilon_R = 0.5$.
+For adaptive solvers, the mesh is refined according to the right-hand side, which represents the curvature of the solution and is a good first attempt at \gls{amr} for elliptic \gls{pdes}. The AMR refinement is kept at $L_{\text{min}} = 2$ to $L_{\text{max}} = 5$ and the refinement threshold is $\epsilon_R = 0.5$, while we vary the patch size as $M = [4, 8, 16, 32, 64]$ to produce higher effective resolution.
 
 % \begin{landscape}
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case01-stacked-bar-plot-comparisons-no-title.pdf}
-        \caption{Effective resolution vs. timing plot for case study one (\refsec{sub:case01}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
+        \caption{Effective resolution vs. timing plot for Case 1 (\refsec{sub:case01}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
         \label{fig:case01-stacked-bar-plot}
     \end{figure}
 % \end{landscape}
@@ -30,20 +30,20 @@ For adaptive solvers, the mesh is refined according to the right-hand side, whic
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case01-work-precision-plots-no-title.pdf}
-    \caption{Work-precision plot for case study one (\refsec{sub:case01}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
+    \caption{Work-precision plot for Case 1 (\refsec{sub:case01}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
     \label{fig:case01-work-precision-plot}
 \end{figure}
 
 {\bf Discussion}
-When using a five-point stencil approach to solve the Poisson equation, the resulting linear system is \gls{spd}. For the \gls{qahps} method, this means we can employ optimizations in the build stage such as operator caching (see \refrem{thm:operator-caching}) and when building the \gls{d2n} matrix (see \refsec{sub:building-leaf-level-operators}). As a constant coefficient elliptic \gls{pde}, we can use the FISHPACK patch solver which is faster than the five-point stencil patch solver. For iterative methods, we can use the \gls{cg} method which has spectral convergence. For this case study, we show results with PETSc's \gls{cg} solver as well as \gls{gmres}, each with either a block Jacobi or \gls{amg} preconditioner. Timing results for increasing resolution is found in \reffig{fig:case01-stacked-bar-plot} and a work-precision plot is found in \reffig{fig:case01-work-precision-plot}.
+When using a five-point stencil approach to solve the Poisson equation, the resulting linear system is \gls{spd}. For the \gls{qahps} method, this means we can employ optimizations in the build stage such as operator caching (see \refrem{thm:operator-caching}) and when building the \gls{d2n} matrix (see \refsec{sub:building-leaf-level-operators}). As a constant coefficient elliptic \gls{pde}, we can use the FISHPACK patch solver which is faster than the five-point stencil patch solver. For iterative methods, we can use the \gls{cg} method which has accelerated convergence compared to general iterative solvers. For this case study, we show results with PETSc's \gls{cg} solver as well as \gls{gmres}, each with either a block Jacobi or \gls{amg} preconditioner. Timing results for increasing resolution is found in \reffig{fig:case01-stacked-bar-plot} and a work-precision plot is found in \reffig{fig:case01-work-precision-plot}.
 
 The stacked bar plot in \reffig{fig:case01-stacked-bar-plot} shows timing results for increasing effective resolution. It shows how each code/method compares against each other in time to solution for the Poisson equation. For the \gls{qahps} methods (uniform and adaptive), the time to solution is partitioned into the build, upwards, and solve stages.
 
 At the lower resolutions, PETSc's iterative solvers are very fast to converge. As the effective resolution increases, the time to solution for the block Jacobi preconditioners rapidly increases, while the \gls{amg} preconditioned solvers scale better.
 
-Comparing iterative solvers against direct solvers, uniform \gls{qahps} has a faster time to solution than uniform, block Jacobi preconditioned \gls{gmres} at $R_{\text{eff}} \ge 512$. Adaptive \gls{qahps} is faster than uniform block Jacobi preconditioned \gls{cg} at $R_{\text{eff}} \ge 512$. In all cases, PETSc's \gls{amg} preconditioned \gls{cg} and \gls{gmres} solvers have a faster time to solution than the \gls{qahps} method. However, the major advantage of \gls{qahps} is that each subsequent elliptic solve will only need to perform the upwards and solve stages (the top two sections of the EllipticForest bars). Even if the mesh is adapted, the adaptive-rebuild feature of the \gls{qahps} method will yield subsequent time to solutions on the same order of magnitude to that of the solve stage.
+Comparing iterative solvers against direct solvers at higher resolutions, uniform \gls{qahps} has a faster time to solution than uniform, block Jacobi preconditioned \gls{gmres} at $R_{\text{eff}} \ge 512$. Adaptive \gls{qahps} is faster than uniform block Jacobi preconditioned \gls{cg} at $R_{\text{eff}} \ge 512$. In all cases, PETSc's \gls{amg} preconditioned \gls{cg} and \gls{gmres} solvers have a faster time to solution than the \gls{qahps} method. The adaptive ThunderEgg solver is much faster than uniform EllipticForest solvers with the adaptive EllipticForest solvers being comparable. However, the major advantage of \gls{qahps} is that each subsequent elliptic solve will only need to perform the upwards and solve stages (the top two sections of the EllipticForest bars). Even if the mesh is adapted, the adaptive-rebuild feature of the \gls{qahps} method will yield subsequent time to solutions on the same order of magnitude to that of the solve stage.
 
-\reffig{fig:case01-work-precision-plot} shows a work-precision plot for each of the methods used in case one. With work-precision plots, curves that lie in the lower-left portion of the plot are desirable. This plot verifies that all methods employed for this case accurately solve the problem, and it shows that the iterative solvers converged to an accurate solution. Although PETSc's solvers are, in general, faster and more accurate, the direct solvers of EllipticForest show a more reliable convergence curve. This is a desirable feature for solvers used in a ``block-box'' implementation, where the user expects the solver to return an accurate solution regardless of the conditioning of the matrix or convergence performance of the solver.
+\reffig{fig:case01-work-precision-plot} shows a work-precision plot for each of the methods used in Case 1. With work-precision plots, curves that lie in the lower-left portion of the plot are desirable. This plot verifies that all methods employed for this case accurately solve the problem, and it shows that the iterative solvers converged to an accurate solution. Although PETSc's solvers are, in general, faster and more accurate, the direct solvers of EllipticForest show a more reliable convergence curve. This is a desirable feature for solvers used in a ``block-box'' implementation, where the user expects the solver to return an accurate solution regardless of the conditioning of the matrix or convergence performance of the solver.
 
 \subsection{Case 2: Variable Coefficient Poisson Equation}
 \label{sub:case2}
@@ -64,13 +64,13 @@ The manufactured solution this arises from is
 \begin{align}
     u(x,y) = \sin(\pi x) \cos(\pi y).
 \end{align}
-The inhomogeneity found in $\beta$ is representative of a inhomogeneous media through which fluid is flowing or a variable density for pressure calculations for a viscous fluid system (i.e. Navier-Stokes). In this case, $\beta$ has a rapid change at $x = 0$ that adaptive solvers can refine around.
+The inhomogeneity found in $\beta$ is representative of an inhomogeneous media through which fluid is flowing or a variable density for pressure calculations for a viscous fluid system (i.e. Navier-Stokes). In this case, $\beta$ has a rapid change at $x = 0$ that adaptive solvers can refine around. For the adaptive solvers, $L_{\text{min}} = 2$ and $L_{\text{max}} = 5$ and any patch directly located to the left or right of $x = 0$ is tagged for refinement, representing a refinement around a material interface.
 
 % \begin{landscape}
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case02-stacked-bar-plot-comparisons-no-title.pdf}
-        \caption{Effective resolution vs. timing plots for case study two (\refsec{sub:case2}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
+        \caption{Effective resolution vs. timing plots for Case 2 (\refsec{sub:case2}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
         \label{fig:case02-stacked-bar-plot}
     \end{figure}
 % \end{landscape}
@@ -78,16 +78,16 @@ The inhomogeneity found in $\beta$ is representative of a inhomogeneous media th
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case02-work-precision-plots-no-title.pdf}
-    \caption{Work-precision plots for case study two (\refsec{sub:case2}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
+    \caption{Work-precision plots for Case 2 (\refsec{sub:case2}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
     \label{fig:case02-work-precision-plot}
 \end{figure}
 
 {\bf Discussion}
-As a variable coefficient problem, the optimizations we took in case one do not apply. Thus, for the PETSc solvers, we use the \gls{gmres} and \gls{bcgs} methods. and not a \gls{cg} method. Both block Jacboi and \gls{amg} preconditioners are still used. ThunderEgg was unable to solve the variable coefficient Poisson equation.
+As a variable coefficient problem, the optimizations we took for the \gls{qahps} method in Case 1 do not apply (operator caching, constructing the \gls{d2n} matrix, and the use of FISHPACK).
 
-Timing results for this case are shown in the stacked bar plot of \reffig{fig:case02-stacked-bar-plot}, similar to that of case one. Similar to case one, at lower effective resolutions, PETSc's iterative methods have a very fast time to solution. At most effective resolutions, the \gls{amg} preconditioned solvers converge fastest. Uniform \gls{qahps} is the slowest method for all but the highest effective resolution. However, adaptive \gls{qahps} remains competitive with all other solvers, and beats most solvers at the highest effective resolution. Adaptive \gls{qahps} can take advantage of refinement around $\beta$, representing material interfaces or steep density gradients.
+Timing results for this case are shown in the stacked bar plot of \reffig{fig:case02-stacked-bar-plot}, similar to that of Case 1. At lower effective resolutions, PETSc's iterative methods have a very fast time to solution, as was also seen in Case 1. At higher effective resolutions, the \gls{amg} preconditioned solvers converge fastest. Uniform \gls{qahps} is the slowest method for all but the highest effective resolution. However, adaptive \gls{qahps} remains competitive with all other solvers, and beats most of the PETSc solvers at the highest effective resolution. The adaptive ThunderEgg solvers are the fastest for $R_{\text{eff}} \ge 512$. The adaptive solvers can take advantage of refinement around $\beta$, representing material interfaces or steep density gradients.
 
-As shown in \reffig{fig:case02-work-precision-plot}, all methods show accurate convergence with comparable times to solution. All PETSc solvers and uniform \gls{qahps}, solve to the same accuracy measured in the $L_{\infty}$ norm. The adaptive \gls{qahps} curve indicates that while the solution does converge, perhaps the mesh refinement criteria did not match regions of error as best as possible. The jump in timing and error for the final PETSc \gls{amg} preconditioned \gls{gmres} shows when a run fails to converge.
+As shown in \reffig{fig:case02-work-precision-plot}, all methods show accurate convergence with comparable times to solution. All PETSc solvers and uniform \gls{qahps}, solve to the same accuracy measured in the $L_{\infty}$ norm. The adaptive \gls{qahps} curve indicates that while the solution does converge, perhaps the mesh refinement criteria did not match regions of error as best as possible.
 
 \subsection{Case 3: Helmholtz Equation}
 \label{sub:case3}
@@ -100,7 +100,7 @@ with $(x,y) \in \Omega = [-1, 1]^2$. We vary $\lambda$ according to $[1, 10, 100
 \begin{align}
     u(x,y) = Y_0(\kappa \sqrt{(x_0 - x)^2 + (y_0 - y)^2}).
 \end{align}
-The Dirichlet boundary conditions are prescribed using the exact solution.
+The Dirichlet boundary conditions are prescribed using the exact solution. As the solution is highly oscillatory throughout the domain, no adaptivity is used in this case. Rather, this case study is used to compare the performance of direct and iterative solvers for high wave number problems.
 
 \begin{figure}
     \centering
@@ -120,19 +120,19 @@ The Dirichlet boundary conditions are prescribed using the exact solution.
         \includegraphics[width=1\textwidth, clip=true, trim={0 0 0 0}]{figures/case03-l1000-stacked-bar-plot-comparisons-no-title.pdf}
         \caption{$\lambda = 1000$}
     \end{subfigure}
-    \caption{Effective resolution vs. timing plots for case study three (\refsec{sub:case3}). The effective resolution is the number of cells per side. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Each plot shows the performance for the solvers at varying $\lambda$. Lower is better.}
+    \caption{Effective resolution vs. timing plots for Case 3 (\refsec{sub:case3}). The effective resolution is the number of cells per side. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Each plot shows the performance for the solvers at varying $\lambda$. Lower is better.}
     \label{fig:case03-stacked-bar-plot}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case03-work-precision-plots-no-title.pdf}
-    \caption{Work-precision plots for case study three (\refsec{sub:case3}). Colors indicate different methods, while markers indicate the value of $\lambda$. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
+    \caption{Work-precision plots for Case 3 (\refsec{sub:case3}). Colors indicate different methods, while markers indicate the value of $\lambda$. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
     \label{fig:case03-work-precision-plot}
 \end{figure}
 
 {\bf Discussion}
-High wave number problems are notoriously difficult for iterative solvers to converge. Because of this, only \gls{amg} preconditioned PETSc solvers are used as those preconditioned with block Jacobi failed to converge. Direct solvers are often preferred in this applications because they solve the system to machine precision, dependent on the resolution and conditioning of the system matrix. Only uniform \gls{qahps} is used in this case study as there is no adaptivity to exploit. As this is a homogeneous elliptic \gls{pde}, the upwards stage does not need to be called.
+High wave number problems are notoriously difficult for iterative solvers to converge. Because of this, only \gls{amg} preconditioned PETSc solvers are used as those preconditioned with block Jacobi failed to converge. Direct solvers are often preferred in this applications because they solve the system to machine precision, dependent on the resolution and conditioning of the system matrix. As this is a homogeneous elliptic \gls{pde}, the upwards stage does not need to be called.
 
 \reffig{fig:case03-stacked-bar-plot} shows the effective resolution vs. time to solution for varying $\lambda$. At lower $\lambda$ ($1$ and $10$), both iterative solvers are faster than uniform \gls{qahps}. However, at $\lambda = 100$ and $\lambda = 1000$, uniform \gls{qahps} is faster in nearly all cases. Both iterative solvers struggle to converge, stopping prematurely when the maximum number of iterations is reached. This is more obvious in the work-precision plot \reffig{fig:case03-work-precision-plot}. Both iterative solvers were paused at $R_{\text{eff}} = 2048$ and $\lambda = 1000$ after nearly an hour.
 
