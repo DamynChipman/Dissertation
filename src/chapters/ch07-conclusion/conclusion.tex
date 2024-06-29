@@ -1,9 +1,9 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-This dissertation provides the motivation, derivation, and implementation of the \gls{qahps} method for solving elliptic \gls{pdes} on adaptive meshes.
+This dissertation provides the motivation, derivation, and implementation of the quadtree-adaptive Hierarchical Poincar\'e-Steklov (QAHPS) method for solving elliptic \gls{pdes} on adaptive meshes.
 
-\refchap{chap:qahps} derives and verifies the \gls{qahps} method for use on adaptively refined finite volume meshes. It is an adaptive extension to the \gls{hps} method \citep{gillman2014direct} and features 4-to-1 merging and splitting algorithms for use with \pforest \citep{burstedde2011p4est}. It was shown that the implementation is accurate to $2^{nd}$ order and the adaptive implementation provides significant speedup in comparison to the uniform implementation.
+\refchap{chap:qahps} derives and verifies the \gls{qahps} method for use on adaptively refined finite volume meshes. It is an adaptive extension to the \gls{hps} method \citep{gillman2014direct} and features 4-to-1 merging and splitting algorithms for use with \pforest \citep{burstedde2011p4est}. It was shown that the implementation is accurate to $2^{nd}$ order and the adaptive implementation provides significant speedup in comparison with the uniform implementation.
 
 The adaptive-rebuild feature of the \gls{qahps} method was highlighted in \refchap{chap:adaptive-build}. The factorization is represented as a set of solution operators $\mathcal{S}$ that are built up through merging of local subdomains. As such, the factorization can be adapted, requiring only the updates of direct ancestors of any tagged node. In practice, this yields significant speedup over having to recompute the factorization completely when the mesh is adapted. In \refchap{chap:adaptive-build}, we showed that this still yields $2^{nd}$ order accuracy at nearly 3.5 times speedup.
 

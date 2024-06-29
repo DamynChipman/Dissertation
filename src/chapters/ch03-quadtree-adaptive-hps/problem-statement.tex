@@ -6,12 +6,12 @@ The general problem we wish to solve is the variable coefficient elliptic \gls{p
     \label{eq:elliptic-pde}
     \mathcal{A}[u(\textbf{x})] \equiv \nabla \cdot \left( \beta(\textbf{x}) \nabla u(\textbf{x}) \right) + \lambda(\textbf{x}) u(\textbf{x}) &= f(\textbf{x}), \quad \textbf{x} \in \Omega \subset \mathcal{R}^2
 \end{align}
-subject to either Dirichlet or Neumann boundary conditions:
+subject to either Dirichlet boundary conditions
 \begin{align}
     \label{eq:elliptic-pde-bc1}
     u(\textbf{x}) &= g(\textbf{x}), \quad \textbf{x} \in \Gamma_D \subset \Omega
 \end{align}
-or
+or Neumann boundary conditions
 \begin{align}
     \label{eq:elliptic-pde-bc2}
     \frac{\partial u}{\partial n} \Big|_{\textbf{x}} &= v(\textbf{x}), \quad \textbf{x} \in \Gamma_N \subset \Omega.
@@ -29,14 +29,14 @@ The domain $\Omega$ is partitioned into a composite collection of subdomains $\O
     \mathcal{Q}_L = \{\Omega_i | i = 1, \dots, N_L\},
     \label{eq:leaf-indexed-quadtree}
 \end{align}
-where $N_L$ is the number of leaf nodes. \ignore{A representation of the mesh in \reffig{fig:adaptive_mesh} as a leaf-indexed quadtree can be found in \reffig{subfig:leaf-indexed-quadtree}.} Building up $\mathcal{Q}_L$ is done by recursively refining a logically square domain into children patches according a refinement criteria (or tagging criteria)
+where $N_L$ is the number of leaf nodes. \ignore{A representation of the mesh in \reffig{fig:adaptive_mesh} as a leaf-indexed quadtree can be found in \reffig{subfig:leaf-indexed-quadtree}.} Building up $\mathcal{Q}_L$ is done by recursively refining a logically square domain into children patches according to a refinement criteria (or tagging criteria)
 \begin{align}
     T_{R} (\textbf{x}) =
     \begin{cases}
         1,& \eta(\textbf{x}) > \epsilon_{R} \\
-        0,& \text{otherwise},
+        0,& \text{otherwise}
     \end{cases}
-    \quad \textbf{x} \in \Omega_i
+    \quad \textbf{x} \in \Omega_i,
 \end{align}
 where $\eta(\textbf{x})$ is a metric used to measure the need for refinement such as error or state variable gradient. A value of $1$ indicates refinement and a value of $0$ indicates no refinement. The user-defined variable $\epsilon_{R}$ is the refinement threshold. While a coarsening criteria $T_{C}$ is also defined similar to the refinement criteria, it is often not used in the initialization of $\mathcal{Q}_L$.
 

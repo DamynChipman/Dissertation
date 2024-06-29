@@ -8,7 +8,7 @@ EllipticForest contains a user extendable and coupling-ready implementation of t
 \subsection{ForestClaw and ThunderEgg}
 \label{sub:thunder-egg}
 
-ThunderEgg \citep{aiton2022thunderegg} is a repository that contains multigrid solvers and preconditioners for elliptic \gls{pdes} for \gls{amr}. Similar to EllipticForest, it is built on top of \pforest \citep{burstedde2011p4est,burstedde2020parallel} for efficient mesh management. It supports parallelism through MPI \citep{mpi40}.
+ThunderEgg \citep{aiton2022thunderegg} is a repository that contains multigrid solvers and preconditioners for elliptic \gls{pdes} for \gls{amr}. Similarly to EllipticForest, it is built on top of \pforest \citep{burstedde2011p4est,burstedde2020parallel} for efficient mesh management. It supports parallelism through MPI \citep{mpi40}.
 
 ThunderEgg is coupled into the ForestClaw library. ForestClaw \citep{calhoun2017forestclaw} is a software library containing parallel, multi-block adaptive finite volume solvers for \gls{pdes}. ForestClaw also extends \pforest \citep{burstedde2011p4est,burstedde2020parallel} with multiple \gls{pdes} solvers. These cases are solved with the ForestClaw interface to ThunderEgg.
 

@@ -1,19 +1,19 @@
 \section{Implementation Details}
 \label{sec:adaptivity}
 
-In this section, we go over some of the details useful in understanding how the \gls{qahps} method is implemented. We discuss the patch solver implementation which wraps fast solvers for \refeqn{eq:elliptic-pde}. We provide details related to the mesh library \pforest which is used as a backend for the quadtree data structure \citep{burstedde2011p4est}.
+In this section, we go over some of the details useful in understanding how the \gls{qahps} method is implemented. We discuss the patch solver implementation which wraps fast solvers for \refeqn{eq:elliptic-pde}. We provide details related to the mesh library \pforest, which is used as a backend for the quadtree data structure \citep{burstedde2011p4est}.
 
 \subsection{Patch Solvers}
 \label{sub:patch_solvers}
 
 When solving \refeqn{eq:elliptic-pde} on a single leaf patch, the method used to solve the \gls{bvp} is called a {\em patch solver} and we denote this function as \texttt{PatchSolver}. The goal of the patch solver is to perform the computations in \refeqn{eq:patch_leaf_solve}. The patch solver takes as input the Dirichlet data on the boundary $\textbf{g}_{ext}^{\tau}$, the inhomogeneous data $\textbf{f}^{\tau}$, and some representation of the discretization (i.e., a finite volume grid that corresponds to the patch domain). On output, \texttt{PatchSolver} returns the solution $\textbf{u}^{\tau}$ of \refeqn{eq:elliptic-pde} on the leaf patch.
 
-Ideally, the patch solver routine takes advantage of fast and optimized solvers for the \gls{bvp} \refeqn{eq:elliptic-pde}. For constant coefficient problems, we wrap the FISHPACK routines \citep{swarztrauber1999fishpack} provided in the FISHPACK90 library \citep{adams2016fishpack90}. FISHPACK solves \refeq{eq:elliptic-pde} using a cyclic-reduction method, providing a fast and efficient solver for ``small'' problems. As we use a cell-centered discretization for use with a finite-volume code, we wrap the \texttt{hwscrt} method for our \texttt{PatchSolver}. When solving the variable coefficient problem, we wrap a patch solver written with PETSc \citep{anl2023petsc} that solves \refeqn{eq:elliptic-pde} using a five-point stencil method.
+Ideally, the patch solver routine takes advantage of fast and optimized solvers for the \gls{bvp} \refeqn{eq:elliptic-pde}. For constant coefficient problems, we wrap the FISHPACK routines \citep{swarztrauber1999fishpack} provided in the FISHPACK90 library \citep{adams2016fishpack90}. FISHPACK solves \refeqn{eq:elliptic-pde} using a cyclic-reduction method, providing a fast and efficient solver for ``small'' problems. As we use a cell-centered discretization for use with a finite-volume code, we wrap the \texttt{hwscrt} method for our \texttt{PatchSolver}. When solving the variable coefficient problem, we wrap a patch solver written with PETSc \citep{anl2023petsc} that solves \refeqn{eq:elliptic-pde} using a five-point stencil method.
 
 \subsection{Building Leaf Level Operators}
 \label{sub:building-leaf-level-operators}
 
-At the leaf level, two operators are required: \Stau and \Ttau. The \texttt{PatchSolver} takes the role of \Stau on the leaf. We explicitly compute the matrix \Ttau through use of the patch solver. We define a function \texttt{BuildD2N} that computes \Ttau according to \refeqn{eq:Ttau-leaf}. The \gls{d2n} matrix depends solely on the discretization -- it is independent of boundary data or inhomogenenous data. The matrix \Ttau is computed column-by-column by solving \refeq{eq:elliptic-pde} with columns of the identity matrix $\textbf{I} \in \real^{4M \times 4M}$ as Dirichlet data \gtau:
+At the leaf level, two operators are required: \Stau and \Ttau. The \texttt{PatchSolver} takes the role of \Stau on the leaf. We explicitly compute the matrix \Ttau through use of the patch solver. We define a function \texttt{BuildD2N} that computes \Ttau according to \refeqn{eq:Ttau-leaf}. The \gls{d2n} matrix depends solely on the discretization -- it is independent of boundary data or inhomogenenous data. The matrix \Ttau is computed column-by-column by solving \refeqn{eq:elliptic-pde} with columns of the identity matrix $\textbf{I} \in \real^{4M \times 4M}$ as Dirichlet data \gtau:
 \begin{align}
 \text{col}_j (\Ttau) = \Ttau \hat{\textbf{e}}_j = \frac{2}{h} (\textbf{I} - \textbf{G} \mathcal{L}_h^{\tau}) \hat{\textbf{e}}_j.
 \end{align}

@@ -3,9 +3,9 @@
 
 To test and verify the implementation of the \gls{qahps} method, we solve two Poisson equations and one Helmholtz equation. For each, we present error, timing, and memory usage results and discuss the performance of our implemented method.
 
-For all of our examples, we discretize the Laplace operator at the patch level using a second-order, 5-point stencil on a finite volume (cell-centered) mesh. The code is implemented as part of EllipticForest \citep{chipman2024ellipticforest}. EllipticForest is written primarily in C++, with wrappers to FORTRAN routines to call FISHPACK and LAPACK \citep{anderson1999lapack} for any dense linear algebra operations (more on EllipticForest in \refsec{sub:elliptic-forest}). The mesh and solution are output into an unstructured VTK mesh file \citep{kitware2006vtkBook} and are visualized with the VisIt software \citep{HPV:VisIt}. All tests were run on a 2021 MacBook Pro with an M1 Pro CPU and 32 GB of RAM.
+For all of our examples, we discretize the Laplacian operator at the patch level using a second-order, 5-point stencil on a finite volume (cell-centered) mesh. The code is implemented as part of EllipticForest \citep{chipman2024ellipticforest}. EllipticForest is written primarily in C++, with wrappers to FORTRAN routines to call FISHPACK and LAPACK \citep{anderson1999lapack} for any dense linear algebra operations (more on EllipticForest in \refsec{sub:elliptic-forest}). The mesh and solution are output into an unstructured VTK mesh file \citep{kitware2006vtkBook} and are visualized with the VisIt software \citep{HPV:VisIt}. All tests were run on a 2021 MacBook Pro with an M1 Pro CPU and 32 GB of RAM.
 
-\subsection{Poisson Equation 1}
+\subsection{Poisson Equation I}
 \label{sub:example_one}
 
 We solve the following boundary value problem:
@@ -27,10 +27,10 @@ For the refinement criteria, we refine according to the right-hand side function
 \end{figure}
 
 {\bf Results and Discussion}
-Tables \ref{tab:poisson_error} and \ref{tab:poisson_timing} show the error, timing, and memory results for the current implementation on this Poisson equation. \reftab{tab:poisson_error} shows results for both a uniformly refined mesh (a mesh without any coarse-fine interfaces or local adaptivity) and results for the adaptive mesh case. For the uniform case, we get the expected second order convergence in both the $L_{\infty}$ and $L_1$ norms. The adaptive case mostly shows second order convergence, except for a few cases where the refinement between successive levels results in a smaller jump in error than second order provides. \reftab{tab:poisson_timing} shows timing and memory results for the same case. Here, the difference between the uniform and adaptive case is highlighted. The adaptive case gives a $4.5$ times speed up for the build stage, and nearly a $20$ times speed up for the solve stage. Memory used to store the quadtree and operators is also significantly reduced with the adaptive case.
+\reftab{tab:poisson_error} and \reftab{tab:poisson_timing} show the error, timing, and memory results for the current implementation on this Poisson equation. \reftab{tab:poisson_error} shows results for both a uniformly refined mesh (a mesh without any coarse-fine interfaces or local adaptivity) and results for the adaptive mesh case. For the uniform case, we get the expected second order convergence in both the $L_{\infty}$ and $L_1$ norms. The adaptive case mostly shows second order convergence, except for a few cases where the refinement between successive levels results in a smaller jump in error than second order provides. \reftab{tab:poisson_timing} shows timing and memory results for the same case. Here, the difference between the uniform and adaptive case is highlighted. The adaptive case gives a $4.5$ times speed up for the build stage, and nearly a $20$ times speed up for the solve stage. Memory used to store the quadtree and operators is also significantly reduced with the adaptive case.
 
 \begin{table}
-    \caption{Convergence analysis for the Poisson equation (\refsec{sub:example_one}). The upper part shows convergence for a uniformly refined mesh, while the lower part shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
+    \caption{Convergence analysis for the Poisson equation (\refsec{sub:example_one}). The upper section shows convergence for a uniformly refined mesh, while the lower section shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
     \centering
     \sisetup{
         table-alignment-mode=format
@@ -83,7 +83,7 @@ Tables \ref{tab:poisson_error} and \ref{tab:poisson_timing} show the error, timi
 \end{table}
 
 \begin{table}
-    \caption{Timing and memory results for the Poisson equation (\refsec{sub:example_one}). The upper part shows results for the uniformly refined mesh, while the lower part shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
+    \caption{Timing and memory results for the Poisson equation (\refsec{sub:example_one}). The upper section shows results for the uniformly refined mesh, while the lower section shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
     \centering
     \sisetup{
         table-alignment-mode=format
@@ -122,12 +122,12 @@ Tables \ref{tab:poisson_error} and \ref{tab:poisson_timing} show the error, timi
     \label{tab:poisson_timing}
 \end{table}
 
-\subsection{Poisson Equation 2 (Polar Star Problem)}
+\subsection{Poisson Equation II (Polar Star Problem)}
 \label{sub:example-two}
 
 As another test for the Poisson equation, we solve a ``polar star'' Poisson problem. The problem is created via a method of manufactured solutions and is engineered to have highly local curvature from the load function. The resulting solution is a collection of polar stars with user specified number of points and radii of curvature. This problem highlights the use of an adaptive mesh to solve the elliptic equation. The exact solution we attempt to reconstruct is the following:
 \begin{align}
-    u(x,y) = \frac{1}{2} \sum_{i=1}^{N} 1 - \tanh \left(\frac{r(x,y)-r_{0,i} \left(r_{1,i} \cos \left(n \theta(x,y)\right)+1\right)}{\epsilon }\right)
+    u(x,y) = \frac{1}{2} \sum_{i=1}^{N} 1 - \tanh \left(\frac{r(x,y)-r_{0,i} \left(r_{1,i} \cos \left(n \theta(x,y)\right)+1\right)}{\epsilon }\right).
 \end{align}
 Computing the Laplacian analytically yields the right-hand side to the Poisson equation. Thus, the polar star Poisson problem is defined as follows:
 \begin{align}
@@ -145,7 +145,7 @@ with
 and where $i=1, ..., N_{polar}$ and $N_{polar}$ is the number of polar stars. Each polar star has a center $(x_0, y_0)$, inner and outer radii $r_0, r_1$, and the number of arms per polar star $n$. The radius and angle have the standard polar transforms:
 \begin{align}
     r(x,y) &= \sqrt{(x - x_0)^2 + (y - y_0)^2} \\
-    \theta(x,y) &= \tan^{-1}\Big(\frac{y - y_0}{x - x_0}\Big)
+    \theta(x,y) &= \tan^{-1}\Big(\frac{y - y_0}{x - x_0}\Big).
 \end{align}
 \reftab{table:polar_star_parameters} has the parameters used in this case study. \reffig{fig:polar_star_plot} shows the resulting mesh and solution. \reftab{tab:polar_star_results} shows the error, timing, and memory results for the polar star Poisson problem.
 \begin{table}[ht]
@@ -172,7 +172,7 @@ and where $i=1, ..., N_{polar}$ and $N_{polar}$ is the number of polar stars. Ea
 \end{figure}
 
 \begin{table}
-    \caption{Convergence analysis for the polar star Poisson problem (\refsec{sub:example-two}). The upper part shows convergence for a uniformly refined mesh, while the lower part shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
+    \caption{Convergence analysis for the polar star Poisson problem (\refsec{sub:example-two}). The upper section shows convergence for a uniformly refined mesh, while the lower section shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
     \centering
     \sisetup{
         table-alignment-mode=format
@@ -215,7 +215,7 @@ and where $i=1, ..., N_{polar}$ and $N_{polar}$ is the number of polar stars. Ea
 \end{table}
 
 \begin{table}
-    \caption{Timing and memory results for the Polar Star Poisson problem (\refsec{sub:example-two}). The upper part shows results for the uniformly refined mesh, while the lower part shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
+    \caption{Timing and memory results for the Polar Star Poisson problem (\refsec{sub:example-two}). The upper section shows results for the uniformly refined mesh, while the lower section shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
     \centering
     \sisetup{
         table-alignment-mode=format
@@ -249,9 +249,9 @@ and where $i=1, ..., N_{polar}$ and $N_{polar}$ is the number of polar stars. Ea
 \end{table}
 
 {\bf Results and Discussion}
-The polar star Poisson problem is able to highlight the benefits of an adaptive mesh. As shown in \reffig{fig:polar_star_plot}, there is room for significant speed up on the areas outside each polar star. The localized curvature is sufficiently captured by this adaptive scheme. \reftab{tab:polar_star_results} show the error analysis for this problem. Because of the large curvature at the boundaries of a polar star and our use of a second-order accurate solver, the $L_{\infty}$ error is larger than the first Poisson equation from \refsec{sub:example_one}, but we can still achieve 6 digits of accuracy in the $L_1$ norm. The timing results shown in \reftab{tab:polar_star_timing} show significant speed up between the uniform and adaptive implementations. The build time has a $5.5$ times speed up, the upwards stage has a $5.8$ times speed up, and the solve stage has a $17$ times speed up. Plus, the memory for the adaptive case is about $1/8th$ of the memory required for the uniform case.
+The polar star Poisson problem is able to highlight the benefits of an adaptive mesh. As shown in \reffig{fig:polar_star_plot}, there is room for significant speed up on the areas outside each polar star. The localized curvature is sufficiently captured by this adaptive scheme. \reftab{tab:polar_star_results} shows the error analysis for this problem. Because of the large curvature at the boundaries of a polar star and our use of a second-order accurate solver, the $L_{\infty}$ error is larger than the first Poisson equation from \refsec{sub:example_one}, but we can still achieve 6 digits of accuracy in the $L_1$ norm. The timing results shown in \reftab{tab:polar_star_timing} show significant speed up between the uniform and adaptive implementations. The build time has a $5.5$ times speed up, the upwards stage has a $5.8$ times speed up, and the solve stage has a $17$ times speed up. Plus, the memory for the adaptive case is about $1/8th$ of the memory required for the uniform case.
 
-\subsection{A Helmholtz Equation}
+\subsection{Helmholtz Equation I}
 \label{sub:example-three}
 
 We now seek to solve the boundary value problem
@@ -260,14 +260,14 @@ We now seek to solve the boundary value problem
 \end{align}
 on the square domain $\Omega = [-0.5, 0.5] \times [-0.5, 0.5]$ and subject to Dirichlet boundary conditions which are supplied via the exact solution discussed below.
 
-To provide an analytical solution to compare against, we use a problem provided in \citep{cheng2006adaptive} where they solve Helmholtz's equation on an adaptive mesh. The manufactured solution is
+To provide an analytical solution to compare against, we use a problem provided by \cite{cheng2006adaptive} where they solve Helmholtz's equation on an adaptive mesh. The manufactured solution is
 \begin{align}
     u(\textbf{x}) = \sum_{i=1}^{3} e^{-\alpha |\textbf{x} - \textbf{x}_i|^2}
 \end{align}
-with $\lambda=0.01$, $\alpha=50$, $\textbf{x}_1 = (0.1, 0.1)$, $\textbf{x}_2 = (0, 0)$, and $\textbf{x}_3 = (-0.15, 0.1)$. The right-hand side is computed analytical via the Mathematica software \citep{wolfram2023mathematica} and is used as the refinement criteria. We set the threshold for refinement to $60$. The solution and right-hand side function for $16 \times 16$ patches are plotted in \reffig{fig:helmholtz_u_plot} and \reffig{fig:helmholtz_f_plot}.
+with $\lambda=0.01$, $\alpha=50$, $\textbf{x}_1 = (0.1, 0.1)$, $\textbf{x}_2 = (0, 0)$, and $\textbf{x}_3 = (-0.15, 0.1)$. The right-hand side is computed analytically via the Mathematica software \citep{wolfram2023mathematica} and is used as the refinement criteria. We set the threshold for refinement to $60$. The solution and right-hand side function for $16 \times 16$ patches are plotted in \reffig{fig:helmholtz_u_plot} and \reffig{fig:helmholtz_f_plot}.
 
 {\bf Results and Discussion}
-As demonstrated with this example, the implemented \gls{qahps} method solves Helmholtz equations as well with the expected second order accuracy. See \reftab{tab:helmholtz_results} for error and convergence analysis. The adaptive mesh is able to successfully capture the curvature and reduce the work required to solve this equation. \reftab{tab:helmholtz_timing} show timing and memory usage results, which show significant speedup due to good mesh adaptation. We achieve a $17$ times speedup for the build and upwards stage and a $57$ times speedup for the solve stage. Memory is also impressive for this particular problem, with solving the same problem with similar error with $4.6\%$ of the required memory.
+As demonstrated with this example, the implemented \gls{qahps} method solves Helmholtz equations as well with the expected second order accuracy. See \reftab{tab:helmholtz_results} for error and convergence analysis. The adaptive mesh is able to successfully capture the curvature and reduce the work required to solve this equation. \reftab{tab:helmholtz_timing} shows timing and memory usage results, which show significant speedup due to good mesh adaptation. We achieve a $17$ times speedup for the build and upwards stage and a $57$ times speedup for the solve stage. Memory usage is also impressive for this particular problem, with the adaptive case using only $4.6\%$ of the memory used in the uniform case.
 
 \begin{figure}
     \centering
@@ -284,7 +284,7 @@ As demonstrated with this example, the implemented \gls{qahps} method solves Hel
 \end{figure}
 
 \begin{table}
-    \caption{Convergence analysis for the Helmholtz problem (\refsec{sub:example-three}). The upper part shows convergence for a uniformly refined mesh, while the lower part shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
+    \caption{Convergence analysis for the Helmholtz problem (\refsec{sub:example-three}). The upper section shows convergence for a uniformly refined mesh, while the lower section shows convergence for an adaptively refined mesh. $M$ is the size of the grid on each leaf patch, $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution for a uniformly refined mesh, DOFs is the total degrees of freedom (i.e., total mesh points), $L_{\infty}$ error is the infinity norm error, $L_{\infty}$ order is the infinity norm convergence order, $L_1$ error is the $1^{\text{st}}$ norm error, and $L_1$ order is the $1^{\text{st}}$ norm convergence order.}
     \centering
     \sisetup{
         table-alignment-mode=format
@@ -337,7 +337,7 @@ As demonstrated with this example, the implemented \gls{qahps} method solves Hel
 \end{table}
 
 \begin{table}
-    \caption{Timing and memory results for the Helmholtz problem (\refsec{sub:example-three}). The upper part shows results for the uniformly refined mesh, while the lower part shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
+    \caption{Timing and memory results for the Helmholtz problem (\refsec{sub:example-three}). The upper section shows results for the uniformly refined mesh, while the lower section shows results for the adaptively refined mesh. The results here are for a patch size of $16 \times 16$. $L_{\text{max}}$ is the maximum level of refinement, $R_{\text{eff}}$ is the effective resolution, DOFs is the total degrees of freedom, $T_{\text{build}}$ is the time in seconds for the build stage, $T_{\text{upwards}}$ is the time in seconds for the upwards stage, $T_{\text{solve}}$ is the time in seconds for the solve stage, and $S$ is the memory storage in megabytes to store the quadtree and all data matrices stored in each node of the quadtree.}
     \centering
     \sisetup{
         table-alignment-mode=format

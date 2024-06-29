@@ -51,7 +51,7 @@ The results of running on Polaris can be found in \reffig{fig:strong_scaling_plo
     \label{fig:strong_scaling_plots}
 \end{figure}
 
-\reffig{fig:strong_scaling_plots} shows that the leaf callback functions for all three stages scale nearly perfectly. This is to be expected as there is no communication at this stage; each partition builds up the factorization or solves the elliptic problem independently. The family callbacks for all three stages, however, have less than optimal scaling. In each stage, the family callback includes communicating data across families. Sibling nodes at intermediate levels (i.e., non-leaf nodes) are often owned by multiple ranks. The communication among ranks at the upper levels involves potentially global communication, including broadcast operations. This amount of communication is what leads to poor strong scaling at medium to larger runs; the amount of communication grows much faster than the compute time.
+\reffig{fig:strong_scaling_plots} shows that the leaf callback functions for all three stages scale nearly perfectly. This is to be expected as there is no communication at this stage; each partition builds up the factorization or solves the elliptic problem independently. The family callbacks for all three stages have less than optimal scaling. In each stage, the family callback includes communicating data across families. Sibling nodes at intermediate levels (i.e., non-leaf nodes) are often owned by multiple ranks. The communication among ranks at the upper levels involves potentially global communication, including broadcast operations. This amount of communication is what leads to poor strong scaling at medium to larger runs; the amount of communication grows much faster than the compute time.
 
 Comparing the strong scaling between the three different stages shows that the solve stage scales better than the build and the upwards stages. The size of the data involved in the communication in the solve stage is smaller than that in the factorization stages.
 
@@ -81,9 +81,9 @@ Comparing the strong scaling between the three different stages shows that the s
 
 Weak scaling analysis is done by solving a problem while increasing both the size of the problem and the number of compute units. The compute time per compute unit stays constant in a weak scaling analysis and time to solution should stay constant as one increases the parallelism.
 
-We solve the ``polar star'' Poisson problem with one polar star per compute unit (see \refsec{sub:example-two}). To keep the number of degrees of freedom constant per MPI rank, we solve on a square domain with a single polar star at the center. With each increase in the number of MPI ranks, we extend the domain to include more polar stars, each at the center of their own partition.
+We solve the polar star Poisson problem with one polar star per compute unit (see \refsec{sub:example-two}). To keep the number of degrees of freedom constant per MPI rank, we solve on a square domain with a single polar star at the center. With each increase in the number of MPI ranks, we extend the domain to include more polar stars, each at the center of their own partition.
 
-For this study, we refine around the edges of the polar stars. The refinement criteria was $|f(x,y)| > 1$, with 7 levels of refinement. Each polar star was a 4-pointed polar star with $r_0 = 0.3$, $r_1 = 0.4$, and $\epsilon = 0.015625$. We solve with patch sizes $M = [16, 32, 64]$, resulting in the degrees of freedom per MPI rank to be $[4096, 16384, 65536]$, respectively. An example of this setup can be found in \reffig{fig:polar-star-plots}, which show the repeated solution and partitioning for $N_R = 4$ arranged in a $2 \times 2$ grid of processes.
+For this study, we refine around the edges of the polar stars. The refinement criteria was $|f(x,y)| > 1$, with 7 levels of refinement. Each polar star was a 4-pointed polar star with $r_0 = 0.3$, $r_1 = 0.4$, and $\epsilon = 0.015625$. We solve with patch sizes $M = [16, 32, 64]$, resulting in the degrees of freedom per MPI rank to be $[4096, 16384, 65536]$, respectively. An example of this setup can be found in \reffig{fig:polar-star-plots}, which shows the repeated solution and partitioning for $N_R = 4$ arranged in a $2 \times 2$ grid of processes.
 
 \begin{figure}
     \centering
@@ -113,7 +113,7 @@ For this study, we refine around the edges of the polar stars. The refinement cr
 \end{align}
 where $t_{1}$ is the time spent in that stage on a single MPI rank. The colors indicate the different patch sizes, and the leaf and family callbacks are shown for all three stages.
 
-Similar to the strong scaling, the leaf callbacks scale better than the family callbacks. The build stage and solve stage leaf callbacks maintain nearly perfect weak scaling efficiency. The upwards stage scales similarly to the scaling of the family callbacks, which is unexpected. The family callbacks demonstrate similar scaling drop off as in the strong scaling. Again, this is likely due to the increased communication, along with the redundant calculations exhibited in this implementation.
+Similarly to the strong scaling, the leaf callbacks scale better than the family callbacks. The build stage and solve stage leaf callbacks maintain nearly perfect weak scaling efficiency. The upwards stage scales similarly to the scaling of the family callbacks, which is unexpected. The family callbacks demonstrate similar scaling drop off as in the strong scaling. Again, this is likely due to the increased communication, along with the redundant calculations exhibited in this implementation.
 
 \begin{figure}
     \centering

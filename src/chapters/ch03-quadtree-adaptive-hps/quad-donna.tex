@@ -1,7 +1,7 @@
 \section{Components of the Quadtree-Adaptive HPS Algorithm}
 \label{sec:quadtree}
 
-The \gls{qahps} method applied to \refeq{eq:elliptic-pde} is broken into a factorization stage (called the build stage) and an application stage (called the solve stage). For problems in which $f(x,y)$ is non-zero, an additional ``upwards'' stage is required which handles the inhomogeneous correction.
+The \gls{qahps} method applied to \refeqn{eq:elliptic-pde} is broken into a factorization stage (called the build stage) and an application stage (called the solve stage). For problems in which $f(x,y)$ is non-zero, an additional ``upwards'' stage is required which handles the inhomogeneous correction.
 
 The goal of the \gls{qahps} method is to build up a {\em solution operator set} defined as
 \begin{align}
@@ -22,14 +22,14 @@ Each stage of the \gls{qahps} method has a leaf-level computation associated wit
 
 We assume that each leaf-level quadrant in the quadtree mesh stores a uniform Cartesian grid with $M \times M$ mesh cells. We refer to this local Cartesian mesh, along with its quadrant as a {\em patch}. Cell-centered finite difference schemes are particularly convenient for adaptively refined Cartesian meshes, since the cell-centered values are not duplicated on adjacent patches. In \reffig{fig:4_to_1_patches} (left), we show four patches that take part in a 4-to-1 merge.
 
-Prior to the build stage of the \gls{qahps} method, we require the solution to an elliptic problem \eqn{elliptic-pde} discretized on an $M \times M$ cell-centered grid as
+Prior to the build stage of the \gls{qahps} method, we require the solution to an elliptic problem \refeqn{eq:elliptic-pde} discretized on an $M \times M$ cell-centered grid as
 \begin{equation}
 \mathcal{A}^{\tau}[u^{\tau}(\textbf{x})] = \Bctau \gtau + \ftau
 \label{eq:patch_poisson_problem}
 \end{equation}
-where $\Bctau$ spreads Dirichlet boundary data $\gtau \in \real^{4M}$ to the grid and \ftau is the right hand side function $f(x,y)$ from \eqn{elliptic-pde} evaluated at cell centers.  We write the solution to this problem in terms of a {\em homogeneous operator} \Lhtau and an inhomogeneous operator \Linhtau which represent efficient solvers on the uniform Cartesian patch. The solution is then given by 
+where $\Bctau$ spreads Dirichlet boundary data $\gtau \in \real^{4M}$ to the grid and \ftau is the right hand side function $f(x,y)$ from \refeqn{eq:elliptic-pde} evaluated at cell centers.  We write the solution to this problem in terms of a {\em homogeneous operator} \Lhtau and an inhomogeneous operator \Linhtau which represent efficient solvers on the uniform Cartesian patch. The solution is then given by 
 \begin{equation}
-u^{\tau}(\textbf{x}) = \Lhtau \gtau + \Linhtau \ftau
+u^{\tau}(\textbf{x}) = \Lhtau \gtau + \Linhtau \ftau.
 \label{eq:patch_leaf_solve}
 \end{equation}
 Where the context is clear, we also view operators \Lhtau and \Linhtau, boundary data \gtau and right hand side data \ftau as matrices and vectors of the appropriate sizes. The components of \utau are given by $u^{\tau}(\textbf{x}) = u^\tau_{ij}$, for $i,j = 1, 2, \hdots, M$.  
@@ -39,7 +39,7 @@ Using these leaf-level solvers, we can now build a leaf-level DtN operator \Ttau
 \subsubsection{\DtN (DtN) operator}
 Given a cell-centered grid solution $\utau = \Lhtau \gtau + \Linhtau \ftau$, we define ``interior" grid values $\uin \in \real^{4M}$ as those grid solution values \utau for which $i = 1$, $i = M$, $j = 1$ or $j = M$.  By analogy, components of \uout are grid solution values for which $i=0$ or $i = M+1$ or $j = 0$ or $j = M+1$.     
 
-On a cell-centered finite volume grid, the known Dirichlet boundary values are not collocated with components of the grid solution so we discretize the Dirichlet boundary condition at the midpoint between \ukin and \ukout as
+On a cell-centered finite volume grid, the known Dirichlet boundary values are not collocated with components of the grid solution, so we discretize the Dirichlet boundary condition at the midpoint between \ukin and \ukout as
 \begin{equation}
 g_k^\tau = \frac{\ukout + \ukin}{2}, \quad k = 1,\hdots , 4M
 \end{equation}
@@ -63,11 +63,11 @@ The vector of Neumann data on patch $\tau$ can then be expressed as
 Introducing an operator (or a matrix of the appropriate size) \Gop that selects \uin from the grid solution data \utau, we write $\uin = \Gop \utau$ so that
 \begin{equation}
 \vtau = \frac{2}{h}(\gtau - \Gop (\Lhtau \gtau + \Linhtau \ftau) = 
-\frac{2}{h}(I - \Gop \Lhtau)\gtau - \frac{h}{2}\Gop \Linhtau \ftau
+\frac{2}{h}(I - \Gop \Lhtau)\gtau - \frac{h}{2}\Gop \Linhtau \ftau.
 \end{equation}
 From this, we define the leaf level \DtN mapping $\Ttau \in \real^{4M \times 4M}$ as
 \begin{equation}
-\Ttau \equiv \frac{2}{h}(I - \Gop\Lhtau).
+\Ttau \equiv \frac{2}{h}(I - \Gop\Lhtau),
 \label{eq:Ttau-leaf}
 \end{equation}
 with inhomogenenous component
@@ -80,7 +80,7 @@ Neumann data on the patch is then computed as
 \vtau = \Ttau \gtau + \htau.
 \label{eq:vtau}
 \end{equation}
-We refer \Ttau as a discrete \DtN operator, although the Neumann data \vtau is not the Neumann data that is commonly understood to be the result of applying a DtN map, since \vtau depends not only on the Dirichlet data \gtau, but also on the inhomogeneous data \ftau.  
+We refer to \Ttau as a discrete \DtN operator, although the Neumann data \vtau is not the Neumann data that is commonly understood to be the result of applying a DtN map, since \vtau depends not only on the Dirichlet data \gtau, but also on the inhomogeneous data \ftau.  
 
 \subsection{The 4-to-1 Merge Algorithm}
 \label{sub:4-to-1merge}
@@ -217,14 +217,14 @@ With these partitions, we can write a set of equations for each of the four sibl
 \end{aligned}
 \label{eq:linalg_one}
 \end{equation}
-Taking the first equation from each of the four sets of equations in \eqn{linalg_one}, we write a system of equations for the Dirichlet data to get
+Taking the first equation from each of the four sets of equations in \refeqn{eq:linalg_one}, we write a system of equations for the Dirichlet data to get
 \begin{equation}
 A\gext + B \gint + \hext = \vext
 \label{eq:sys_one}
 \end{equation}
 where the Dirichlet data has been partitioned into {\em exterior} data and {\em interior} data.  The exterior data is data on the boundary of the parent patch $\tau$ is given by
 \begin{equation}
-\gext \equiv \left[\galphap{\tau}, \gbetap{\tau} , \ggammap{\tau}, \gomegap{\tau}\right]^T
+\gext \equiv \left[\galphap{\tau}, \gbetap{\tau} , \ggammap{\tau}, \gomegap{\tau}\right]^T.
 \end{equation}
 To define the interior data, we use the fact that our solution is continuous across boundaries shared by sibling grids and enumerate data on the four shared boundaries as
 \begin{equation}
@@ -239,7 +239,7 @@ With the Dirichlet data on the shared boundary uniquely defined, the interior pa
 \begin{equation}
 \gint \equiv \left[\gzero, \gone, \gtwo, \gthree\right]^T
 \end{equation}
-The vectors \vtau and \htau is partitioned analogously.
+The vectors \vtau and \htau are partitioned analogously.
 
 The block matrices $A$ and $B$ are defined as
 \begin{equation}
@@ -254,7 +254,7 @@ B = \begin{bmatrix}
 \zeromat               & \Tbetap{\omega}{\tau} & \Tbetap{\alpha}{\tau} & \zeromat \\
 \Tgammap{\alpha}{\tau} & \zeromat              & \zeromat              & \Tgammap{\omega}{\tau} \\
 \zeromat               & \Tomegap{\beta}{\tau} & \zeromat              & \Tomegap{\gamma}{\tau}
-\end{bmatrix}
+\end{bmatrix}.
 \label{eq:matrix_AB}
 \end{equation}
 
@@ -318,7 +318,7 @@ and
 \label{eq:h_diff}
 \end{equation}
 
-Combining \eqn{sys_one} and \eqn{sys_two}, we have
+Combining \refeqn{eq:sys_one} and \refeqn{eq:sys_two}, we have
 \begin{equation}
 \begin{aligned}
 A\gext + B\gint + \hext & = \vext \\
@@ -344,7 +344,7 @@ D^{-1}C      & I & -D^{-1}\Deltah
 \end{equation}
 We express the first row of the reduced system in equation form as 
 \begin{equation}
-\left(A - BD^{-1}C\right) \gext = \vext - \hext + B D^{-1}\Deltah
+\left(A - BD^{-1}C\right) \gext = \vext - \hext + B D^{-1}\Deltah.
 \label{eq:complete_ops}
 \end{equation}
 From this, we can identify the {\em merged} DtN operator 
@@ -357,9 +357,9 @@ as the operator that maps exterior Dirichlet data to exterior Neumann data, with
 \htau \equiv -\hext + B D^{-1}\Deltah. 
 \label{eq:htau-merged}
 \end{equation}
-With these choices of \Ttau and \htau  we recover the expression from \eqn{vtau}.
+With these choices of \Ttau and \htau  we recover the expression from \refeqn{eq:vtau}.
 
-The second row of the reduced system \eqn{reduced_system}, given by 
+The second row of the reduced system \refeqn{eq:reduced_system}, given by 
 \begin{equation}
 \gint = -D^{-1}C \gext -D^{-1} \Deltah,
 \end{equation}
@@ -369,7 +369,6 @@ From this, we introduce the {\em solution} operator \Stau, given by
 \Stau \equiv -D^{-1}C.
 \label{eq:Stau-merged}
 \end{equation}
-
 Introducing  the operator
 \begin{equation}
 \Xtau \equiv -D^{-1},
@@ -401,7 +400,8 @@ Once the build stage is complete, the solve stage maps Dirichlet data on parent 
 
 The formalism presented in terms of merged components \Xtau, \Stau, \Ttau and \htau is identical to that presented by \cite{gillman2014direct} for the horizontal merge of two leaf boxes.
 
-The build stage of \gls{qahps} method is described in \refalg{alg:build_merge_uniform}.
+The build stage of \gls{qahps} method is described in \refalg{alg:build_merge_uniform}. At the end of this build stage, we will have a single DtN operator \Ttau and single vector \htau for the root patch.  At all levels, though, we will have a solve operator \Stau and inhomogeneous vector \wtau.
+
 \begin{algorithm}[H]
     \caption{Build stage on a uniformly refined quadtree mesh}
     \begin{algorithmic}[0]
@@ -412,7 +412,7 @@ The build stage of \gls{qahps} method is described in \refalg{alg:build_merge_un
                 \State Solve $D\Stau = -C$ to get operator \Stau. 
                 \State Build operator \Ttau using \refeqn{eq:Ttau-merged}.
                 \State Solve $D\wtau = \Deltah$ using to get \wtau.  
-                \State Build merged inhomogeneous vector \htau using \eqn{htau}.
+                \State Build merged inhomogeneous vector \htau using \refeqn{eq:htau}.
                 \State Store \Stau, \Ttau, \htau and \wtau with quadrant $\tau$.
                 \State Delete operators \Talpha, \Tbeta, \Tgamma, \Tomega and inhomogeneous data \halpha, \hbeta, \hgamma and \homega.
             \EndIf
@@ -420,7 +420,6 @@ The build stage of \gls{qahps} method is described in \refalg{alg:build_merge_un
     \end{algorithmic}
     \label{alg:build_merge_uniform}
 \end{algorithm}
-At the end of this build stage, we will have a single DtN operator \Ttau and single vector \htau for the root patch.  At all levels, though, we will have a solve operator \Stau and inhomogeneous vector \wtau.
 
 \subsection{The 1-to-4 Split Algorithm}
 \label{sub:1-to-2-split-algorithm}
@@ -431,9 +430,9 @@ A solve stage of the \gls{qahps} method starts with data $g(x,y)$ defined on the
     \begin{algorithmic}[0]
         \For{$\tau = N,N-1,\hdots,0$} \Comment{Iterate over quadrants in uniform quadtree}
             \If{$\tau$ is a leaf-level patch}
-                \State Solve elliptic problem \refeq{eq:elliptic-pde}
+                \State Solve elliptic problem \refeqn{eq:elliptic-pde}
             \Else{} \Comment{$\tau$ has four child patches $\alpha$, $\beta$, $\gamma$, $\omega$.}
-                \State Use \eqn{solve_eqn} to map Dirichlet \gext on $\tau$ to Dirichlet data \gint on the interior shared child patch boundaries.
+                \State Use \refeqn{eq:solve_eqn} to map Dirichlet \gext on $\tau$ to Dirichlet data \gint on the interior shared child patch boundaries.
             \EndIf
         \EndFor
     \end{algorithmic}
@@ -441,7 +440,7 @@ A solve stage of the \gls{qahps} method starts with data $g(x,y)$ defined on the
 \end{algorithm}
 
 \begin{remark}
-    If the \gls{qahps} solver is to be used with multiple right hand-sides for the same composite quadtree mesh, the build stage as described above should be separated into a ``factorization" stage that only stores the operators \Ttau and \Stau and a second ``upwards" stage that builds the inhomogeneous data \wtau from \htau for each patch. If the problem in \eqn{elliptic-pde} has zero right-hand side data, any operations involving \htau can be eliminated, since the inhomogeneous Neumann data will be identically zero.
+    If the \gls{qahps} solver is to be used with multiple right hand-sides for the same composite quadtree mesh, the build stage as described above should be separated into a ``factorization" stage that only stores the operators \Ttau and \Stau and a second ``upwards" stage that builds the inhomogeneous data \wtau from \htau for each patch. If the problem in \refeqn{eq:elliptic-pde} has zero right-hand side data, any operations involving \htau can be eliminated, since the inhomogeneous Neumann data will be identically zero.
 \end{remark}
 
 \begin{remark}
@@ -452,7 +451,7 @@ A solve stage of the \gls{qahps} method starts with data $g(x,y)$ defined on the
 \subsection{Coarse-Fine Interfaces}
 \label{sub:mesh_adaptivity}
 
-The merging and splitting processes we have described so far applies only to four sibling patches occupying a coarser level quadrant. For a fully adaptive quadtree, however, not all quadrants are refined to the same level, resulting in coarse-fine interfaces (see \reffig{fig:adaptive_merge}). To accommodate for the coarse-fine interfaces, we coarsen entire patches with coarse-fine interfaces. This approach is similar to the approach used in \citep{babb2018accelerated}. The mesh is not changed as a result of this process, just the data on a patch, as detailed below.
+The merging and splitting processes we have described so far applies only to four sibling patches occupying a coarser level quadrant. For a fully adaptive quadtree, however, not all quadrants are refined to the same level, resulting in coarse-fine interfaces (see \reffig{fig:adaptive_merge}). To accommodate for the coarse-fine interfaces, we coarsen entire patches with coarse-fine interfaces. This approach is similar to the approach used by \cite{babb2018accelerated}. The mesh is not changed as a result of this process, just the data on a patch, as detailed below.
 
 \begin{figure}
     \centering
@@ -488,7 +487,7 @@ and coarsening $\textbf{T}$ and $\textbf{h}$ is done by matrix multiplication
 \end{align}
 where the prime indicates a coarsened version of that data.
 
-A 1-to-4 split with a parent that has data that was coarsened during the 4-to-1 merge (for example, patch 5 from \reffig{fig:adaptive_merge}) needs to be un-coarsened. The requisite data that is un-coarsened during the solve stage is the boundary data, $\gext$ in Equation \refeq{eq:solve_eqn}. This is done with the block diagonal interpolation matrices formed above:
+A 1-to-4 split with a parent that has data that was coarsened during the 4-to-1 merge (for example, patch 5 from \reffig{fig:adaptive_merge}) needs to be un-coarsened. The requisite data that is un-coarsened during the solve stage is the boundary data, $\gext$ in Equation \refeqn{eq:solve_eqn}. This is done with the block diagonal interpolation matrices formed above:
 \begin{align}
     \textbf{g}^{\tau}_{ext} = \textbf{L}_{1,2}^{B} \textbf{g}^{\tau'}_{ext}.
 \end{align}
@@ -503,15 +502,15 @@ For both approaches, we assume that a patch has $M$ points per side, resulting i
 \subsection{Stages of the Quadtree-Adaptive HPS Method}
 \label{sub:stages-of-the-quadtree-adaptive-hps-method}
 
-Algorithmically, the quadtree-adaptive HPS method is implemented with three stages: a build stage, an upwards stage, and a solve stage. The build stage computes $\textbf{T}^{\tau}$ and $\textbf{S}^{\tau}\ \forall\ \tau \in \mathcal{Q}_P$. The upwards stage computes $\textbf{h}^{\tau}$ and $\textbf{w}^{\tau}\ \forall\ \tau \in \mathcal{Q}_P$. Building up the set of solution operators $\mathcal{S}$ is split into the build and the upwards stage to reduce redundant calculations when solving \refeq{eq:elliptic-pde} with a homogeneous RHS, or $f(\textbf{x}) = 0$. The solve stage applies the solution operators $\textbf{S}^{\tau}$ and $\textbf{w}^{\tau}$ from the set $\mathcal{S}$ to supplied  Dirichlet boundary data $\textbf{g}^{\tau}$ on $\Omega_D$  according to \refeq{eq:u-Sg-w}.
+Algorithmically, the quadtree-adaptive HPS method is implemented with three stages: a build stage, an upwards stage, and a solve stage. The build stage computes $\textbf{T}^{\tau}$ and $\textbf{S}^{\tau}\ \forall\ \tau \in \mathcal{Q}_P$. The upwards stage computes $\textbf{h}^{\tau}$ and $\textbf{w}^{\tau}\ \forall\ \tau \in \mathcal{Q}_P$. Building up the set of solution operators $\mathcal{S}$ is split into the build and the upwards stage to reduce redundant calculations when solving \refeqn{eq:elliptic-pde} with a homogeneous RHS, or $f(\textbf{x}) = 0$. The solve stage applies the solution operators $\textbf{S}^{\tau}$ and $\textbf{w}^{\tau}$ from the set $\mathcal{S}$ to supplied  Dirichlet boundary data $\textbf{g}^{\tau}$ on $\Omega_D$  according to \refeqn{eq:u-Sg-w}.
 
 In each of the stages, there are two traversals of the quadtree $\mathcal{Q}_P$: a leaf traversal and a family traversal. A leaf traversal visits each of the leaf nodes in the leaf-indexed or path-indexed quadtree (the leaf nodes for both trees are identical). A family traversal visits each family of the quadtree, where a family consists of four children nodes and a parent node. Family traversals can be done in a pre-order fashion (start at the root and visit families before moving down the tree) or in a post-order fashion (start at the leaf nodes and visit families before moving up the tree).
 
 \subsubsection{The Build Stage}
 
-The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-level patches as outlined in \refsec{sub:leaf_level_computations}. The family traversal of the build stage is outlined in \refalg{alg:build_merge} and is done in a post-order fashion. This is the 4-to-1 merge algorithm for the adaptive case as outlined in \refsec{sub:4-to-1merge}.
+The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-level patches as outlined in \refsec{sub:leaf_level_computations}. The family traversal of the build stage is outlined in \refalg{alg:build_merge} and is done in a post-order fashion. \refalg{alg:build_merge} is the 4-to-1 merge algorithm for the adaptive case as outlined in \refsec{sub:4-to-1merge}.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \caption{\texttt{Merge4To1} Function (Build Stage Family Callback)}
     \begin{algorithmic}[0]
         \Require $\textbf{T}^{\alpha}$, $\textbf{T}^{\beta}$, $\textbf{T}^{\gamma}$, $\textbf{T}^{\omega}$
@@ -521,7 +520,7 @@ The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-
                 \State Coarsen: $\textbf{T}^{i} = \textbf{L}_{2,1} \textbf{T}^{i} \textbf{L}_{1,2}$
             \EndIf
         \EndFor
-        \State Compute matrices $\textbf{A}, \textbf{B}, \textbf{C}, \textbf{D}$ according to \refeq{eq:matrix_AB} and \refeq{eq:matrix_CD}.
+        \State Compute matrices $\textbf{A}, \textbf{B}, \textbf{C}, \textbf{D}$ according to \refeqn{eq:matrix_AB} and \refeqn{eq:matrix_CD}.
         \State Compute $\textbf{S}^{\tau} = \textbf{D}^{-1} \textbf{C}$
         \State Compute $\textbf{T}^{\tau} = \textbf{A} - \textbf{B} \textbf{D}^{-1} \textbf{C}$
     \end{algorithmic}
@@ -532,7 +531,7 @@ The leaf traversal of the build stage computes $\textbf{T}^{\tau}$ for all leaf-
 
 The leaf traversal of the upwards stage computes $\textbf{h}^{\tau}$ for all leaf-level patches. The family traversal is outlined in \refalg{alg:upwards_merge} and is also done in a post-order fashion. This is the inhomogeneous part of the 4-to-1 merge algorithm from \refsec{sub:4-to-1merge}.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \caption{\texttt{Upwards4To1} Function (Upwards Stage Family Callback)}
     \begin{algorithmic}[0]
         \Require $\textbf{T}^{\alpha}$, $\textbf{T}^{\beta}$, $\textbf{T}^{\gamma}$, $\textbf{T}^{\omega}$, $\textbf{h}^{\alpha}$, $\textbf{h}^{\beta}$, $\textbf{h}^{\gamma}$, $\textbf{h}^{\omega}$
@@ -542,8 +541,8 @@ The leaf traversal of the upwards stage computes $\textbf{h}^{\tau}$ for all lea
         \State Coarsen: $\textbf{h}^{i} = \textbf{L}_{2,1} \textbf{h}^{i}$
         \EndIf
         \EndFor
-        \State Compute matrices $\textbf{B}, \textbf{D}$ according to \refeq{eq:matrix_AB} and \refeq{eq:matrix_CD}
-        \State Compute $\Delta \textbf{h}$ according to \refeq{eq:h_diff}
+        \State Compute matrices $\textbf{B}, \textbf{D}$ according to \refeqn{eq:matrix_AB} and \refeqn{eq:matrix_CD}
+        \State Compute $\Delta \textbf{h}$ according to \refeqn{eq:h_diff}
         \State Compute $\textbf{h}^{\tau} = \textbf{h}^{\tau} + \textbf{B} \textbf{w}^{\tau}$
         \State Compute $\textbf{w}^{\tau} = -\textbf{D}^{-1} \Deltah$.
     \end{algorithmic}
@@ -556,7 +555,7 @@ The goal of the solve stage is to apply the now computed solution matrix $\textb
 
 The leaf traversal is then a final step to iterate over all the leaf-level patches and solve \refeqn{eq:elliptic-pde} on the subdomains using fast methods. This is an independent step for each leaf-level patch and can be done simultaneously everywhere, taking advantage of the domain decomposition.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \caption{\texttt{Split1To4} Function (Solve Stage Family Callback)}
     \begin{algorithmic}[0]
         \Require $\textbf{S}^{\tau}$, $\textbf{g}^{\tau} = \textbf{u}^{\tau}_{ext}$
