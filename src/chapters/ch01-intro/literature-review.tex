@@ -47,7 +47,7 @@ If $\Omega$ is on a logically rectangular domain (i.e. 2D Cartesian plane), perh
     x_i &= x_l + i \Delta x,\ \ \ i = 0, 1, ..., N_x-1 \\
     y_i &= y_l + j \Delta y,\ \ \ j = 0, 1, ..., N_y-1
 \end{align}
-where $N_x, N_y$ is the number of points in the x- and y-direction and grid spacing is defined as
+where $N_x, N_y$ is the number of points in the x- and y-direction and the grid spacing is defined as
 \begin{align}
     \Delta x &= \frac{x_u - x_l}{N_x - 1} \\
     \Delta y &= \frac{y_u - y_l}{N_y - 1}.
@@ -65,7 +65,7 @@ Using these Taylor Series expansions (and $\beta(x,y) = 1$), we can replace \ref
     \frac{u_{i-1,j} - 2u_{i,j} + u_{i+1,j}}{\Delta x^2} + \frac{u_{i,j-1} - 2u_{i,j} + u_{i,j+1}}{\Delta y^2} &= f_{i,j}.
     \label{eq:poisson_FD}
 \end{align}
-For each grid point $i = 0, ..., N_x - 1$ and $j = 0, ..., N_y - 1$, this expression forms a linear system with $(N_x-1) \times (N_y-1)$ unknowns. The system that is formed from this discretization is sparse and banded. When $\beta(\textbf{x}) > 0$, the system formed by this discretization is also symmetric, positive definite (SPD). This allows the use of more optimized solvers such as the Conjugate Gradient method.
+For each grid point $i = 0, ..., N_x - 1$ and $j = 0, ..., N_y - 1$, this expression forms a linear system with $(N_x-1) \times (N_y-1)$ unknowns. The system that is formed from this discretization is sparse and banded. By including Dirichlet boundary conditions in a manner that creates a symmetric, positive definite matrix, this allows the use of more optimized solvers such as the Conjugate Gradient method.
 
 For example, let $N_x = N_y = N$ for simplicity (thus $\Delta x = \Delta y = h$). Index the vector $\textbf{u}$ first by rows, then by columns, such that
 \begin{align}
@@ -88,9 +88,9 @@ where
     \begin{bmatrix}
         -4 & 1 & 0 & ... & 0 \\
         1 & -4 & 1 & ... & 0 \\
-        0 & 1 & -4 & ... & 0 \\
-        \vdots & \vdots & \vdots & \ddots & \vdots \\
-        0 & 0 & 0 & ... & -4
+        0 & 1 & -4 & \ddots & 0 \\
+        \vdots & \vdots & \ddots & \ddots & 1 \\
+        0 & 0 & 0 & 1 & -4
     \end{bmatrix}.
 \end{align}
 We also index the RHS similarly to $u(x,y)$ resulting in a RHS vector $\textbf{f}$. This leads to the linear system
@@ -137,7 +137,7 @@ Green's Theorem (i.e., integration by parts) is used to break the LHS into integ
     -\int_{\Omega} \nabla v \cdot \nabla u d\Omega + \int_{\Gamma} v \frac{\partial u}{\partial n} d\Gamma &= \int_{\Omega} vf d\Omega
     \label{eq:poisson_weak_form}
 \end{align}
-The idea behind the finite element method is to use basis functions
+The idea behind the finite element method is to approximate the solution as a linear combination of basis functions
 \begin{align}
     u(x,y) \approx \bar{u} = \sum_{k=1}^{N_k} c_k \phi(x,y)
 \end{align}
@@ -191,9 +191,9 @@ Iterative methods start with an initial guess of a solution to \refeqn{eq:ls} an
 This suggests the following recursion relationship for the next iteration:
 \begin{align}
 \textbf{M} \textbf{u}^{k+1} &= \textbf{N} \textbf{u}^k + \textbf{b} \\
-\textbf{u}^{k+1} &= \textbf{M}^{-1} \textbf{N} \textbf{u}^k + \textbf{M}^{-1} \textbf{b}.
+\Rightarrow \textbf{u}^{k+1} &= \textbf{M}^{-1} \textbf{N} \textbf{u}^k + \textbf{M}^{-1} \textbf{b}.
 \end{align}
-The idea is to choose $\textbf{M}$ that captures as much of $\textbf{A}$ as possible, but is still easy and quick to invert. As $\textbf{A}$ is either banded or sparse, classical splitting methods for elliptic PDEs split $\textbf{A}$ into $\textbf{A} = \textbf{D} - \textbf{L} - \textbf{U}$, where $\textbf{D}$ is the diagonal components of $\textbf{A}$, and $\textbf{L}$ and $\textbf{U}$ are the lower and upper pieces, respectively. Classical choices for $\textbf{M}$ and $\textbf{N}$ are summarized in Table \ref{tab:splitting}.
+The idea is to choose $\textbf{M}$ that captures as much of $\textbf{A}$ as possible, but is still easy and quick to invert. As $\textbf{A}$ is either banded or sparse, classical splitting methods for elliptic PDEs split $\textbf{A}$ into $\textbf{A} = \textbf{D} - \textbf{L} - \textbf{U}$, where $\textbf{D}$ is the diagonal components of $\textbf{A}$, and $\textbf{L}$ and $\textbf{U}$ are the negative of the lower and upper pieces, respectively. Classical choices for $\textbf{M}$ and $\textbf{N}$ are summarized in Table \ref{tab:splitting}.
 
 \begin{table}[h!]
     \centering
@@ -212,7 +212,7 @@ Another class of iterative methods are called Krylov subspace methods. The Krylo
 \begin{align}
 \mathcal{K}_k = \text{span} \{ \textbf{r}_0, \textbf{A} \textbf{r}_0, \textbf{A}^2 \textbf{r}_0, ..., \textbf{A}^{k-1} \textbf{r}_0 \}
 \end{align}
-based on the initial residual $\textbf{r}_0 = \textbf{b} - \textbf{A} \textbf{u}^{(0)}$. The goal is to take the next iteration from this particular space. Two common Krylov methods are the Conjugate Gradient method \citep{hestenes1952methods} and the Generalized Minimal Residual (GMRES) method \citep{saad1986gmres}. In the conjugate gradient method, the approximation is adjusted by a conjugate direction, or a vector that is conjugate with respect to $\textbf{A}$. This vector is called the search direction $\textbf{p}$ and is scaled by $\alpha$, which is computed by solving a quadratic minimization problem. The GMRES method builds up an orthogonal matrix $\textbf{Q}$ through a process called the Arnoldi iteration. The Arnoldi iteration forms $\textbf{A} = \textbf{Q} \textbf{H} \textbf{Q}^*$ for orthogonal matrix $\textbf{Q}$ and Hessenberg matrix $\textbf{H}$. The next iteration is found via $\textbf{Q} \textbf{y}$ where $\textbf{y}$ is found from a least squares problem involving $\textbf{H}$. These methods are summarized in Table \ref{tab:ksm}.
+based on the initial residual $\textbf{r}_0 = \textbf{b} - \textbf{A} \textbf{u}^{(0)}$. The goal is to select the next iteration from this particular space. Two common Krylov methods are the Conjugate Gradient method \citep{hestenes1952methods} and the Generalized Minimal Residual (GMRES) method \citep{saad1986gmres}. In the conjugate gradient method, the approximation is adjusted by a conjugate direction, or a vector that is conjugate with respect to $\textbf{A}$. This vector is called the search direction $\textbf{p}$ and is scaled by $\alpha$, which is computed by solving a quadratic minimization problem. The GMRES method builds up an orthogonal matrix $\textbf{Q}$ through a process called the Arnoldi iteration. The Arnoldi iteration forms $\textbf{A} = \textbf{Q} \textbf{H} \textbf{Q}^*$ for orthogonal matrix $\textbf{Q}$ and Hessenberg matrix $\textbf{H}$. The next iteration is found via $\textbf{Q} \textbf{y}$ where $\textbf{y}$ is found from a least squares problem involving $\textbf{H}$. These methods are summarized in Table \ref{tab:ksm}.
 
 \begin{table}[h!]
     \centering
@@ -226,9 +226,9 @@ based on the initial residual $\textbf{r}_0 = \textbf{b} - \textbf{A} \textbf{u}
     \label{tab:ksm}
 \end{table}
 
-Most iterative methods are considered ``matrix-free" methods. A ``matrix-free" method is a method that does not explicitly form the matrix $\textbf{A}$, but is rather applied to a vector. For example, if implementing a Conjugate Gradient method for a finite difference discretization, one has to compute the product $\textbf{A} \textbf{u}^{(k)}$. Instead of doing the full matrix-vector calculation, one can write a function that takes $\textbf{u}$ and returns the second order, central difference operator as computed in \refeqn{eq:poisson_FD}.
+Many iterative methods are considered ``matrix-free" methods. A ``matrix-free" method is a method that does not explicitly form the matrix $\textbf{A}$, but is rather applied to a vector. For example, if implementing a Conjugate Gradient method for a finite difference discretization, one has to compute the product $\textbf{A} \textbf{u}^{(k)}$. Instead of doing the full matrix-vector calculation, one can write a function that takes $\textbf{u}$ and returns the second order, central difference operator as computed in \refeqn{eq:poisson_FD}.
 
-As finite difference discretization schemes for elliptic PDEs lead to sparse matrices, the application of $\textbf{A}$ to a vector can be done in $\mathcal{O}(N)$ operations, where $N$ is the number of unknowns in the vector. Thus, the performance for most iterative methods is approximately $\mathcal{O}(N \times N_{iter})$, where $N_{iter}$ is the number of iterations required for a specified tolerance. However, as $N$ gets larger, often so does $N_{iter}$, leading to poor scaling, as noted in \citep{martinsson2019fast}. In addition, iterative methods may not always converge for a given initial guess or structure of $\textbf{A}$, which make them unfavorable for ``black-box" implementations for linear solvers.
+As finite difference discretization schemes for elliptic PDEs lead to sparse matrices, the application of $\textbf{A}$ to a vector can be done in $\mathcal{O}(N)$ operations, where $N$ is the number of unknowns in the vector. Thus, the performance for most iterative methods is approximately $\mathcal{O}(N \times N_{iter})$, where $N_{iter}$ is the number of iterations required for a specified tolerance. However, as $N$ gets larger, often so does $N_{iter}$, leading to poor scaling, as noted in \citep{martinsson2019fast}. In addition, iterative methods may not always converge for a given initial guess or structure of $\textbf{A}$, which can make them unfavorable for ``black-box" solvers for linear solvers.
 
 \subsubsection{Direct Methods}
 \label{sub:direct-methods}
@@ -243,11 +243,11 @@ Motivation for direct solvers stems from wanting to improve upon the disadvantag
 \end{itemize}
 We will look at how direct methods are useful as we consider some common direct methods from \citep{leveque2007finite} and \citep{trefethen1997numerical}.
 
-Many direct methods are based on matrix factorizations. Perhaps the most well-known is the LU decomposition. LU decomposition factors the coefficient matrix into a lower and upper triangular matrix: $\textbf{A} = \textbf{L} \textbf{U}$. The idea is to use Gaussian elimination to eliminate entries below the main diagonal, and then use back-substitution to solve for each entry in $\textbf{u}$. In general, LU decomposition requires $\mathcal{O}(N^3)$ floating point operations and thus is impractical for large matrices. There are banded solvers for Gaussian elimination that can take advantage of the sparsity of a matrix. The Cholesky decomposition is a variant of Gaussian elimination for SPD matrices. Other matrix factorizations include the QR-decomposition, $\textbf{A} = \textbf{Q} \textbf{R}$, and the singular value decomposition, $\textbf{A} = \textbf{U} \boldsymbol{\Sigma} \textbf{V}^*$.
+Many direct methods are based on matrix factorizations. Perhaps the most well-known is the LU decomposition. LU decomposition factors the coefficient matrix into a lower and upper triangular matrix: $\textbf{P} \textbf{A} = \textbf{L} \textbf{U}$. The idea is to use Gaussian elimination to eliminate entries below the main diagonal, and then use back-substitution to solve for each entry in $\textbf{u}$. In general, LU decomposition requires $\mathcal{O}(N^3)$ floating point operations and thus is impractical for large matrices. There are banded solvers for Gaussian elimination that can take advantage of the sparsity of a matrix to significantly reduce the cost of the factorization. The Cholesky decomposition is a variant of Gaussian elimination for SPD matrices. Other matrix factorizations include the QR-decomposition, $\textbf{A} = \textbf{Q} \textbf{R}$, and the singular value decomposition, $\textbf{A} = \textbf{U} \boldsymbol{\Sigma} \textbf{V}^*$, which both have $\mathcal{O}(N^3)$ complexity.
 
-For a finite difference discretization of elliptic PDEs, $\textbf{A}$ is banded and sparse, and more efficient algorithms for LU decomposition exist. For 1D problems, $\textbf{A}$ is diagonally dominant and sparse with the bandwidth (the number of entries off the main diagonal in a matrix) dependent on the order of the stencil. For the stencil shown in the second order discretization in \refeqn{eq:poisson_FD}, $\textbf{A}$ is tridiagonal. This allows us to use algorithms such as Thomas's algorithm for solving a tridiagonal system in $\mathcal{O}(N)$ steps \citep{higham2002accuracy}. In higher dimensions, block versions of Thomas's algorithm exist \citep{quarteroni2010numerical}.
+For a finite difference discretization of elliptic PDEs, $\textbf{A}$ is banded and sparse, and more efficient algorithms for LU decomposition exist. For 1D problems, $\textbf{A}$ is diagonally dominant and sparse with the bandwidth (the distance of non-zero entries from the main diagonal in a matrix) dependent on the order of the stencil. For the stencil shown in the second order discretization in \refeqn{eq:poisson_FD}, $\textbf{A}$ is tridiagonal. This allows us to use algorithms such as Thomas's algorithm for solving a tridiagonal system in $\mathcal{O}(N)$ steps \citep{higham2002accuracy}. In higher dimensions, block versions of Thomas's algorithm exist \citep{quarteroni2010numerical}.
 
-Compared to iterative methods, direct methods will terminate in a finite number of steps. Direct methods are more fit for ``black-box" implementations. However, because most direct methods need to explicitly form $\textbf{A}$, they are more difficult to implement with limited computing resources. Indeed, going to higher dimensions and higher orders often dramatically increases memory and compute requirements.
+Compared to iterative methods, direct methods will terminate in a finite number of steps. Direct methods are more suitable for ``black-box" implementations. However, because most direct methods need to explicitly form $\textbf{A}$, they are more difficult to implement with limited computing resources. Indeed, going to higher dimensions and higher orders often dramatically increases memory and compute requirements.
 
 \subsubsection{Hierarchical Methods}
 \label{sub:hierarchical-methods}
@@ -260,7 +260,7 @@ The methods grouped under hierarchical methods attempt to accelerate some of the
 {\bf The Multigrid Method}
 The multigrid method was introduced by \cite{brandt1977multi}. It has been widely used in various applications and for all types of solution methods. \cite{briggs2000multigrid} provides an overview and tutorial of the multigrid method.
 
-In the multigrid method, the idea is to use multiple levels of grids and solution methods on each level to solve a larger problem. To look at the multigrid method, we define the error in the linear system to be $\textbf{e} = \textbf{u}^{(k)} - \textbf{u}_{exact}$ (the difference between the exact solution and the $kth$ iteration). After a few iterations of a smoother (typically Jacobi's method), because of the local averaging, any high-frequency error is quickly dampened away. What takes longer to eliminate is the low-frequency error associated with the global problem. By coarsening the grid, the lower frequency error is dampened more quickly. Multigrid combines the ability of iterative methods to locally reduce error and a coarsening grid technique to accelerate convergence.
+In the multigrid method, the idea is to use multiple levels of grids and solution methods on each level to solve a larger problem. To look at the multigrid method, we define the error in the linear system to be $\textbf{e}^{(k)} = \textbf{u}^{(k)} - \textbf{u}_{exact}$ (the difference between the exact solution and the $kth$ iteration). After a few iterations of a smoother (typically Jacobi's method), because of the local averaging, any high-frequency components of $\textbf{e}^{(k)}$ are quickly dampened away. What takes longer to eliminate are the low-frequency components of $\textbf{e}^{(k)}$ associated with the global problem. By coarsening the grid, the lower frequencies appear like higher frequencies on the coarser grid, which are dampened by the smoother. Multigrid combines the ability of iterative methods to locally reduce error and a coarsening grid technique to accelerate convergence.
 
 In the multigrid method, one starts with the solution on a fine grid, for example, with grid spacing $h$, and performs a few iterations of a smoother. After a few iterations, the $h$-level grid is projected onto a coarser $2h$-level grid. On this level, one performs a few more iterations of a smoother. Because the grid is coarser, this step is faster. Again, after a few iterations, the solution is projected onto an even coarser $4h$-level grid and a few more iterations are performed. This is done a specified number of times, and then the solution is interpolated back up the levels to the original grid. This is shown in Figure \ref{fig:multigrid}.
 
@@ -300,7 +300,7 @@ The \gls{hps} method has been applied to solve 3D elliptic \gls{pdes} \citep{hao
 \begin{figure}
     \centering
     \includegraphics[width=0.7\columnwidth]{figures/merge_figure.pdf}
-    \caption{HPS Merge Operation. The merged patch $\Omega_{\tau}$ is the union of children $\Omega_{\alpha}$ and $\Omega_{\beta}$, i.e. $\Omega_{\tau} = \Omega_{\alpha} \cup \Omega_{\beta}$. Red, green, and blue nodes correspond to index sets $\textbf{I}_1$, $\textbf{I}_2$, and $\textbf{I}_3$, respectively. The merge operation eliminates the nodes on the interface of the children patches.}
+    \caption{HPS Merge Operation. The merged patch $\Omega_{\tau}$ is the union of children $\Omega_{\alpha}$ and $\Omega_{\beta}$, i.e. $\Omega_{\tau} = \Omega_{\alpha} \cup \Omega_{\beta}$. The red, green, and blue lines indicated nodes that correspond to index sets $\textbf{I}_1$, $\textbf{I}_2$, and $\textbf{I}_3$, respectively. The merge operation eliminates the nodes on the interface of the children patches.}
     \label{fig:merge}
 \end{figure}
 

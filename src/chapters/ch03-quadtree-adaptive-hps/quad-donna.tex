@@ -243,13 +243,13 @@ The vectors \vtau and \htau are partitioned analogously.
 
 The block matrices $A$ and $B$ are defined as
 \begin{equation}
-A = \begin{bmatrix}
+\textbf{A} = \begin{bmatrix}
 \Talphap{\tau}{\tau} & \zeromat & \zeromat & \zeromat \\
 \zeromat & \Tbetap{\tau}{\tau} & \zeromat & \zeromat  \\
 \zeromat & \zeromat & \Tgammap{\tau}{\tau} & \zeromat  \\
 \zeromat& \zeromat & \zeromat & \Tomegap{\tau}{\tau} \\
 \end{bmatrix}, \qquad
-B = \begin{bmatrix}
+\textbf{B} = \begin{bmatrix}
 \Talphap{\gamma}{\tau} & \zeromat              & \Talphap{\beta}{\tau} & \zeromat \\
 \zeromat               & \Tbetap{\omega}{\tau} & \Tbetap{\alpha}{\tau} & \zeromat \\
 \Tgammap{\alpha}{\tau} & \zeromat              & \zeromat              & \Tgammap{\omega}{\tau} \\
@@ -274,7 +274,7 @@ C \gext + D\gint  + \Deltah = \zeromat
 \end{equation}
 where
 \begin{equation}
-C = 
+\textbf{C} = 
 \begin{bmatrix}
 \Talphap{\tau}{\gamma} & \zeromat               & \Tgammap{\tau}{\alpha} & \zeromat \\
 \zeromat               & \Tbetap{\tau}{\omega}  & \zeromat                & \Tomegap{\tau}{\beta} \\ 
@@ -283,7 +283,7 @@ C =
 \end{bmatrix},
 \end{equation}
 \begin{equation}
-D = \begin{bmatrix}
+\textbf{D} = \begin{bmatrix}
 \Talphap{\gamma}{\gamma} + \Tgammap{\alpha}{\alpha} 
 & \zeromat 
 & \Talphap{\beta}{\gamma} 
@@ -318,33 +318,33 @@ and
 \label{eq:h_diff}
 \end{equation}
 
-Combining \refeqn{eq:sys_one} and \refeqn{eq:sys_two}, we have
+Combining Equations (\ref{eq:sys_one}) and (\ref{eq:sys_two}), we have
 \begin{equation}
 \begin{aligned}
-A\gext + B\gint + \hext & = \vext \\
-C\gext + D\gint + \Deltah & = \zeromat.
+\textbf{A} \gext + \textbf{B} \gint + \hext & = \vext \\
+\textbf{C} \gext + \textbf{D} \gint + \Deltah & = \zeromat.
 \end{aligned}
 \end{equation}
 Writing this system as an augmented system and applying a single step of block Gaussian elimination, we get
 \begin{equation}
 \left[
 \begin{array}{cc|c}
-A & B & \vext - \hext\\
-C & D & -\Deltah\\
+\textbf{A} & \textbf{B} & \vext - \hext\\
+\textbf{C} & \textbf{D} & -\Deltah\\
 \end{array}\right]
 \;
 \Longrightarrow 
 \;
 \left[
 \begin{array}{cc|c}
-A - BD^{-1}C & 0 & \vext - \hext + B D^{-1}\Deltah\\
-D^{-1}C      & I & -D^{-1}\Deltah
+\textbf{A} - \textbf{B}\textbf{D}^{-1}\textbf{C} & 0 & \vext - \hext + \textbf{B} \textbf{D}^{-1}\Deltah\\
+\textbf{D}^{-1}\textbf{C}      & \textbf{I} & -\textbf{D}^{-1}\Deltah
 \end{array}\right].
 \label{eq:reduced_system}
 \end{equation}
 We express the first row of the reduced system in equation form as 
 \begin{equation}
-\left(A - BD^{-1}C\right) \gext = \vext - \hext + B D^{-1}\Deltah.
+\left(\textbf{A} - \textbf{B}\textbf{D}^{-1}\textbf{C}\right) \gext = \vext - \hext + \textbf{B} \textbf{D}^{-1}\Deltah.
 \label{eq:complete_ops}
 \end{equation}
 From this, we can identify the {\em merged} DtN operator 
@@ -354,31 +354,31 @@ From this, we can identify the {\em merged} DtN operator
 \end{equation}
 as the operator that maps exterior Dirichlet data to exterior Neumann data, with merged inhomogeneous Neumann data given as
 \begin{equation}
-\htau \equiv -\hext + B D^{-1}\Deltah. 
+\htau \equiv -\hext + \textbf{B} \textbf{D}^{-1}\Deltah. 
 \label{eq:htau-merged}
 \end{equation}
 With these choices of \Ttau and \htau  we recover the expression from \refeqn{eq:vtau}.
 
 The second row of the reduced system \refeqn{eq:reduced_system}, given by 
 \begin{equation}
-\gint = -D^{-1}C \gext -D^{-1} \Deltah,
+\gint = -\textbf{D}^{-1}\textbf{C} \gext -\textbf{D}^{-1} \Deltah,
 \end{equation}
 shows us how to recover interior Dirichlet data \gint  from exterior data \gext.  
 From this, we introduce the {\em solution} operator \Stau, given by 
 \begin{equation}
-\Stau \equiv -D^{-1}C.
+\Stau \equiv -\textbf{D}^{-1}\textbf{C}.
 \label{eq:Stau-merged}
 \end{equation}
 Introducing  the operator
 \begin{equation}
-\Xtau \equiv -D^{-1},
+\Xtau \equiv -\textbf{D}^{-1},
 \label{eq:xtau}
 \end{equation}
 we can write \Ttau and \Stau in convenient form as
 \begin{equation}
 \begin{aligned}
-\Stau & = \Xtau C \\
-\Ttau & = A + B\Stau.
+\Stau & = \Xtau \textbf{C} \\
+\Ttau & = \textbf{A} + \textbf{B}\Stau.
 \end{aligned}
 \end{equation}
 To compute the merged inhomogeneous term, we first compute
@@ -388,7 +388,7 @@ To compute the merged inhomogeneous term, we first compute
 \end{equation}
 so that
 \begin{equation}
-\htau = -\hext - B\wtau.
+\htau = -\hext - \textbf{B}\wtau.
 \label{eq:htau}
 \end{equation}
 
@@ -471,7 +471,7 @@ The merging and splitting processes we have described so far applies only to fou
             \includegraphics[width=\textwidth, clip=true, trim={100 150 100 150}]{figures/adaptive_merge3.pdf}
         \end{subfigure}
     \end{tabular}
-    \caption{Example of a coarse-fine interface merge: (left) patches $6, 7, 8, \&\ 9$ will be merged and result in a coarse-fine interface, (middle) the data on patch 5 is averaged (coarsened), (right) merging $2, 3, 4, \&\ 5$ can continue as detailed in \refsec{sub:4-to-1merge}.}
+    \caption{Example of a coarse-fine interface merge: (left) patches $4, 5, 6, \&\ 7$ will be merged and result in a coarse-fine interface, (middle) the data on patch 3 is averaged (coarsened), (right) merging $0, 1, 2, \&\ 3$ can continue as detailed in \refsec{sub:4-to-1merge}.}
     \label{fig:adaptive_merge}
 \end{figure}
 

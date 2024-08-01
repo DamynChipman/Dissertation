@@ -1,6 +1,8 @@
 \section{Case Studies}
 \label{sec:case-studies}
 
+% TODO: Add figures for 
+
 Here we examine three case studies involving elliptic \gls{pdes}. For all iterative methods, the relative tolerance is set to $\tau_{\text{rel}} = 1 \times 10^{-12}$ and the maximum number of iterations allowed is $N_{I,\textsc{max}} = 10000$. For all cases, the effective resolution, which is the resolution of the domain at the finest level if the mesh is adaptive, will vary from $R_{\text{eff}} = [128, 256, 512, 1024, 2048]$. All runs were done in parallel on a 2021 MacBook Pro (M1 Pro CPU with 8 cores, 32GB RAM).
 
 \subsection{Case 1: The Poisson Equation}
@@ -14,7 +16,14 @@ for $(x,y) \in \Omega = [-1,1]^2$, which has the exact solution
 \begin{align}
     u(x,y) = x^2 (1 - x^2) y^2 (y^2 - 1).
 \end{align}
-Dirichlet boundary conditions are supplied at the boundary using the exact solution. This problem is chosen to allow for refinement at the corners for any solver that can take advantage of adaptivity.
+Dirichlet boundary conditions are supplied at the boundary using the exact solution. This problem is chosen to allow for refinement at the corners for any solver that can take advantage of adaptivity. The solution is plotted in \reffig{fig:case01-plot}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case01-u-plot.png}
+    \caption{Plot of the solution for Case 1 (\refsec{sub:case01}). The mesh is adapted according to the right-hand side. Each square represents a patch, which contains an $M \times M$ finite volume grid (not shown).}
+    \label{fig:case01-plot}
+\end{figure}
 
 For adaptive solvers, the mesh is refined according to the right-hand side, which represents the curvature of the solution and is a good first attempt at \gls{amr} for elliptic \gls{pdes}. The AMR refinement is kept at $L_{\text{min}} = 2$ to $L_{\text{max}} = 5$ and the refinement threshold is $\epsilon_R = 0.5$, while we vary the patch size as $M = [4, 8, 16, 32, 64]$ to produce higher effective resolution.
 
@@ -46,7 +55,7 @@ Comparing iterative solvers against direct solvers at higher resolutions, unifor
 \reffig{fig:case01-work-precision-plot} shows a work-precision plot for each of the methods used in Case 1. With work-precision plots, curves that lie in the lower-left portion of the plot are more accurate and faster. This plot verifies that all methods employed for this case accurately solve the problem, and it shows that the iterative solvers converged to an accurate solution. Although PETSc's solvers are, in general, faster and more accurate, the direct solvers of EllipticForest show a more reliable convergence curve. This is a desirable feature for solvers used in a ``block-box'' implementation, where the user expects the solver to return an accurate solution regardless of the conditioning of the matrix or convergence performance of the solver.
 
 \subsection{Case 2: The Variable Coefficient Poisson Equation}
-\label{sub:case2}
+\label{sub:case02}
 
 This case solves a variable coefficient Poisson problem
 \begin{align}
@@ -64,15 +73,29 @@ and thus
 \end{align}
 The manufactured solution this arises from is
 \begin{align}
-    u(x,y) = (x + y) \tanh(x).
+    u(x,y) = (x + y) \tanh(x),
 \end{align}
-The inhomogeneity found in $\beta$ is representative of an inhomogeneous media through which fluid is flowing or a variable density for pressure calculations for a viscous fluid system (i.e. Navier-Stokes). In this case, $\beta$ has a rapid change at $x = 0$ that adaptive solvers can refine around. For the adaptive solvers, $L_{\text{min}} = 2$ and $L_{\text{max}} = 5$ and any patch directly located to the left or right of $x = 0$ is tagged for refinement, representing a refinement around a material interface.
+which is shown in \reffig{fig:case02-plot-u}. The inhomogeneity found in $\beta$ is representative of an inhomogeneous media through which fluid is flowing or a variable density for pressure calculations for a viscous fluid system (i.e. Navier-Stokes). In this case, $\beta$ has a rapid change at $x = 0$ that adaptive solvers can refine around, as seen in \reffig{fig:case02-plot-beta}. For the adaptive solvers, $L_{\text{min}} = 2$ and $L_{\text{max}} = 5$ and any patch directly located to the left or right of $x = 0$ is tagged for refinement, representing a refinement around a material interface.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case02-u-plot-no-mesh.png}
+    \caption{Plot of the solution for Case 2 (\refsec{sub:case02}).}
+    \label{fig:case02-plot-u}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case02-beta-plot.png}
+    \caption{Plot of $\beta(x,y)$ for Case 2 (\refsec{sub:case02}). The mesh is adapted at the interface representing two different materials.}
+    \label{fig:case02-plot-beta}
+\end{figure}
 
 % \begin{landscape}
     \begin{figure}
         \centering
         \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case02-stacked-bar-plot-comparisons-no-title.pdf}
-        \caption{Effective resolution vs. timing plots for Case 2 (\refsec{sub:case2}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
+        \caption{Effective resolution vs. timing plots for Case 2 (\refsec{sub:case02}). The effective resolution is the number of cells per side if the mesh were refined to $L_{\text{max}}$. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Lower is better.}
         \label{fig:case02-stacked-bar-plot}
     \end{figure}
 % \end{landscape}
@@ -80,7 +103,7 @@ The inhomogeneity found in $\beta$ is representative of an inhomogeneous media t
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case02-work-precision-plots-no-title.pdf}
-    \caption{Work-precision plots for Case 2 (\refsec{sub:case2}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
+    \caption{Work-precision plots for Case 2 (\refsec{sub:case02}). Colors indicate different methods and solvers, while markers indicate the type of preconditioner for certain iterative solvers. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
     \label{fig:case02-work-precision-plot}
 \end{figure}
 
@@ -92,7 +115,7 @@ Timing results for this case are shown in the stacked bar plot of \reffig{fig:ca
 As shown in \reffig{fig:case02-work-precision-plot}, all methods show accurate convergence. Most PETSc solvers and uniform \gls{qahps}, solve to the same accuracy measured in the $L_{\infty}$ norm. Block Jacobi preconditioned \gls{gmres} fails to converge at the highest effective resolution. The adaptive \gls{qahps} curve and the adaptive ThunderEgg curve indicates that while the solution does converge, perhaps the mesh refinement criteria did not match regions of error as best as possible.
 
 \subsection{Case 3: The High Wave Number Helmholtz Equation}
-\label{sub:case3}
+\label{sub:case03}
 
 The final case study solves a Helmholtz equation with varying wave number:
 \begin{align}
@@ -100,9 +123,31 @@ The final case study solves a Helmholtz equation with varying wave number:
 \end{align}
 with $(x,y) \in \Omega = [-1, 1]^2$. We vary $\lambda$ according to $[1, 10, 100, 1000]$ to test the various solvers for convergence for wave-like systems with high wave numbers. The wave number $\kappa$ is related to $\lambda$: $\kappa = \sqrt{\lambda}$. The exact solution is that of a wave source located at $(-2, 2)$ with an exact solution of
 \begin{align}
-    u(x,y) = Y_0(\kappa \sqrt{(x_0 - x)^2 + (y_0 - y)^2}).
+    u(x,y) = Y_0(\kappa \sqrt{(x_0 - x)^2 + (y_0 - y)^2}),
 \end{align}
-The Dirichlet boundary conditions are prescribed using the exact solution. As the solution is highly oscillatory throughout the domain, no adaptivity is used in this case. Rather, this case study is used to compare the performance of direct and iterative solvers for high wave number problems.
+where $Y_0$ is the Bessel function of the second kind. These are plotted in \reffig{fig:case03-plots}. The Dirichlet boundary conditions are prescribed using the exact solution. As the solution is highly oscillatory throughout the domain, no adaptivity is used in this case. Rather, this case study is used to compare the performance of direct and iterative solvers for high wave number problems.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case03-u-plot-lambda-1-no-mesh.png}
+        \caption{$\lambda = 1$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case03-u-plot-lambda-10-no-mesh.png}
+        \caption{$\lambda = 10$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case03-u-plot-lambda-100-no-mesh.png}
+        \caption{$\lambda = 100$}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \includegraphics[width=1.0\textwidth, clip=true, trim={45 80 70 180}]{figures/case03-u-plot-lambda-1000-no-mesh.png}
+        \caption{$\lambda = 1000$}
+    \end{subfigure}
+    \caption{Plots of the solution for Case 3 (\refsec{sub:case03}).}
+    \label{fig:case03-plots}
+\end{figure}
 
 For PETSc, we use the GMRES and \gls{bcgs} methods for iterative solvers. The system formed with this discretization is not SPD and thus the \gls{cg} method cannot be used.
 
@@ -124,14 +169,14 @@ For PETSc, we use the GMRES and \gls{bcgs} methods for iterative solvers. The sy
         \includegraphics[width=1\textwidth, clip=true, trim={0 0 0 0}]{figures/case03-l1000-stacked-bar-plot-comparisons-no-title.pdf}
         \caption{$\lambda = 1000$}
     \end{subfigure}
-    \caption{Effective resolution vs. timing plots for Case 3 (\refsec{sub:case3}). The effective resolution is the number of cells per side. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Each plot shows the performance for the solvers at varying $\lambda$. Lower is better.}
+    \caption{Effective resolution vs. timing plots for Case 3 (\refsec{sub:case03}). The effective resolution is the number of cells per side. Each color indicates a different method/solver. Patterns indicate different stages or preconditioners. Each plot shows the performance for the solvers at varying $\lambda$. Lower is better.}
     \label{fig:case03-stacked-bar-plot}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=1.0\textwidth, clip=true, trim={0 0 0 0}]{figures/case03-work-precision-plots-no-title.pdf}
-    \caption{Work-precision plots for Case 3 (\refsec{sub:case3}). Colors indicate different methods, while markers indicate the value of $\lambda$. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
+    \caption{Work-precision plots for Case 3 (\refsec{sub:case03}). Colors indicate different methods, while markers indicate the value of $\lambda$. Curves that jump to the upper-right region of the plot usually indicate a failure to converge. For work-precision plots, curves that lie in the lower-left portion of the plot are better.}
     \label{fig:case03-work-precision-plot}
 \end{figure}
 
