@@ -51,7 +51,7 @@
 \newcommand{\reffig}[1]{Figure \ref{#1}}
 \newcommand{\refalg}[1]{Algorithm \ref{#1}}
 \newcommand{\reftab}[1]{Table \ref{#1}}
-\newcommand{\refeqn}[1]{Equation \ref{#1}}
+\newcommand{\refeqn}[1]{Equation (\ref{#1})}
 \newcommand{\refapdx}[1]{Appendix \ref{#1}}
 \newcommand{\refrem}[1]{Remark \ref{#1}}
 
@@ -203,7 +203,7 @@
 \advisor{Donna Calhoun}{Ph.D.}
 \committeeMemberA{Michal Kopera}{Ph.D.}
 \committeeMemberB{Grady Wright}{Ph.D.}
-\committeeMemberC{Kirk Ketelsen}{Ph.D.}
+% \committeeMemberC{Kirk Ketelsen}{Ph.D.}
 %------------------------------------------------------------------------------
 \dean{Scott Lowe}{Dean of the Graduate College}
 %------------------------------------------------------------------------------
@@ -229,12 +229,12 @@
 \tableofcontents
 %------------------------------------------------------------------------------
 \cleardoublepage
-\addcontentsline{toc}{chapter}{List of figures}
-\listoffigures
-%------------------------------------------------------------------------------
-\cleardoublepage
 \addcontentsline{toc}{chapter}{List of tables}
 \listoftables
+%------------------------------------------------------------------------------
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of figures}
+\listoffigures
 %------------------------------------------------------------------------------
 % print abbreviations
 \printglossary[title={List of abbreviations},type=\acronymtype]
